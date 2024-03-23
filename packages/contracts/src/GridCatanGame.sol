@@ -150,8 +150,36 @@ contract GridCatanGame is Owned {
         }
     }
 
-    function purchase() public {
-        // build
+    function purchase(uint256 landId, uint256 additionalWorkers, uint256 additionalSoldiers) public {
+        // 1 worker costs 1 boba
+        // 1 soldier costs 1 sesame bun
+
+        //check if msg.sender is owner of landId
+        require(msg.sender == landInfo[landId].owner, "Not Land Owner");
+        
+        //check if msg.sender has enough resources
+        require(
+            GridResource1155(gridResource1155).balanceOf(msg.sender, 5) >= additionalWorkers &&
+            GridResource1155(gridResource1155).balanceOf(msg.sender, 6) >= additionalSoldiers,
+            "Not enough resources"
+        );
+
+        // burn resources for workers and soldiers
+        GridResource1155(gridResource1155).burn(
+            msg.sender, 
+            5, 
+            additionalWorkers
+        );
+        GridResource1155(gridResource1155).burn(
+            msg.sender, 
+            6, 
+            additionalSoldiers
+        );
+
+        // update workers and soldiers
+        landInfo[landId].workers += additionalWorkers;
+        landInfo[landId].totalSoldiers += additionalSoldiers;
+
     }
 
     function collect(uint256 landId) public {
@@ -167,7 +195,7 @@ contract GridCatanGame is Owned {
             availableResources, 
             ""
         );
-        // update time of last resource collect
+        // update time of last resource collection
         landInfo[landId].timeOfLastResourceCollect = block.timestamp;
     }
 
