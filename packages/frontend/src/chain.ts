@@ -5,8 +5,8 @@
  */
 
 import { getDefaultConfig, getDefaultConnectors } from "connectkit"
-import { createConfig } from "wagmi"
 import { type Chain, http } from "viem"
+import { createConfig } from "wagmi"
 import { localhost } from "wagmi/chains"
 
 // =================================================================================================

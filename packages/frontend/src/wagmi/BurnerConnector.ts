@@ -4,10 +4,11 @@
 
 // TODO completely broken with wagmi v2, just fixed it up to that it at least compiles, fix later
 
-import { PrivateKeyAccount, privateKeyToAccount } from "viem/accounts"
 import { Address, Client, createWalletClient, http } from "viem"
-import { localhost } from "wagmi/chains"
+import { PrivateKeyAccount, privateKeyToAccount } from "viem/accounts"
 import { connect, disconnect, getAccount } from "wagmi/actions"
+import { localhost } from "wagmi/chains"
+
 import { wagmiConfig } from "src/chain.js"
 
 // =================================================================================================

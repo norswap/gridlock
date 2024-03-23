@@ -1,23 +1,26 @@
 // =================================================================================================
 
 // Must come first, so that can we can hook global members before they're used by imports.
-import "src/setup"
-import "src/store/setup"
-import { ConnectKitProvider } from "connectkit"
+import { ComponentType, useEffect } from "react"
 import { NextPage } from "next"
 import type { AppProps } from "next/app"
 import Head from "next/head"
-import { useAccount, WagmiProvider } from "wagmi"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { wagmiConfig } from "src/chain"
 // import jotaiDebug from "src/components/lib/jotaiDebug"
 // import { GlobalErrorModal } from "src/components/modals/globalErrorModal"
 // import { useIsHydrated } from "src/hooks/useIsHydrated"
 // import { useErrorConfig } from "src/store/hooks"
 // import "src/styles/globals.css"
 import { useRouter } from "next/router"
-import { ComponentType, useEffect } from "react"
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { ConnectKitProvider } from "connectkit"
+import { useAccount, WagmiProvider } from "wagmi"
+
+import { wagmiConfig } from "src/chain"
 import { useIsHydrated } from "src/hooks/useIsHydrated"
+
+import "src/setup"
+import "src/store/setup"
 // import { Toaster } from "src/components/ui/sonner"
 
 // =================================================================================================
