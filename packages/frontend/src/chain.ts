@@ -55,7 +55,8 @@ export const wagmiConfig = createConfig(
 
         transports: {
             // RPC URL for each chain
-            [localhost.id]: http(`https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`),
+            [localhost.id]: http("http://localhost:8545"),
+            // [mainnet.id]: http(`https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`),
         },
 
         connectors: [...getDefaultConnectors(connectKitAppConfig)],

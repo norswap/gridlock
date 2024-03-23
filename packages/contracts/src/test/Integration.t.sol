@@ -4,11 +4,8 @@ pragma solidity ^0.8.0;
 import {Test} from "forge-std/Test.sol";
 import {Deploy} from "../deploy/Deploy.s.sol";
 
-import {Main} from "../Main.sol";
-
 contract Integration is Test {
     Deploy private deployment;
-    Main private main;
 
     // =============================================================================================
 
@@ -16,8 +13,6 @@ contract Integration is Test {
         deployment = new Deploy();
         deployment.dontLog();
         deployment.run();
-
-        main = deployment.main();
 
         string memory mnemonic = "test test test test test test test test test test test junk";
         (address account0,) = deriveRememberKey(mnemonic, 0);

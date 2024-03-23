@@ -4,10 +4,12 @@ pragma solidity ^0.8.0;
 import {Script, console2} from "forge-std/Script.sol";
 // import {Multicall3} from "multicall/Multicall3.sol";
 
-import {Main} from "../Main.sol";
+import "../GridLand721.sol";
+import "../GridResource1155.sol";
 
 contract Deploy is Script {
-    Main public main;
+    GridLand721 public gridLand;
+    GridResource1155 public gridResource;
 
     bool private doLog = true;
 
@@ -25,9 +27,12 @@ contract Deploy is Script {
         vm.startBroadcast();
 
         // deploy
-        main = new Main();
 
-        log("Main address", address(main));
+        gridLand = new GridLand721("Gridland", "GL", 25);
+        gridResource = new GridResource1155("gridResource://");
+
+        log("GridLand721 address", address(gridLand));
+        log("GridResource1155 address", address(gridResource));
 
         vm.stopBroadcast();
 
