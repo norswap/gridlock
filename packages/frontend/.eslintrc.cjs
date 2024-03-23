@@ -1,6 +1,6 @@
 /** @type {import("eslint").Linter.Config} */
 const config = {
-  extends: ["next/core-web-vitals", "plugin:@typescript-eslint/recommended"],
+  extends: ["next/core-web-vitals", "plugin:@typescript-eslint/recommended", "prettier"],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: "./tsconfig.json",

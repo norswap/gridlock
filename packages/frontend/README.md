@@ -23,6 +23,9 @@ These are needed at runtime (although Next will take care of bundling them for u
   - `eslint-config-next` —  eslint config for use with Next.js
   - `@typescript-eslint/parser` — parser enabling eslint to lint typescript files 
   - `@typescript-eslint/eslint-plugin` — typescript rules for eslint
+- `prettier` — code formatter
+  - `eslint-config-prettier` — disables eslint rules that conflict with prettier
+  - `prettier-plugin-tailwindcss` — prettier plugin to format tailwindcss classes
 - `tailwindcss` — a collection of css styles + a tool to generate CSS files that only include used styles,
    with peer dependencies `postcss` (CSS post-processing) and `autoprefixer` (postcss plugin that adds
    browser prefixes as needed (e.g. `-webkit-`))
