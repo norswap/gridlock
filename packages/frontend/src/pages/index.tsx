@@ -28,30 +28,39 @@ const Home: GridlockPage = ({ isHydrated }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isRightNetwork])
 
+    const gridItems = Array.from({ length: 25 }, (_, index) => index + 1) // Create 25 items for the grid
+
     return (
-        <main className="flex min-h-screen flex-col items-center justify-center">
-            <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-                <h1 className="font-serif text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-                    <span className="font-mono font-light text-red-400">Grid</span>lock
-                </h1>
+        <main className="flex h-screen flex-col gap-y-10 px-10 py-10">
+            <h1 className="font-serif text-7xl font-extrabold tracking-tight text-white">
+                <span className="font-mono font-light text-red-400">Grid</span>lock
+            </h1>
 
-                {notConnected && (
-                    <div>
-                        <button className="btn" onClick={async () => setConnectKitModalOpen(true)}>
-                            ConnectWallet
-                        </button>
+            {notConnected && (
+                <button
+                    className="btn w-64 border-yellow-500 hover:border-orange-500 hover:text-orange-500"
+                    onClick={async () => setConnectKitModalOpen(true)}
+                >
+                    ConnectWallet
+                </button>
+            )}
+
+            {isWrongNetwork && <ConnectKitButton />}
+
+            {isRightNetwork && (
+                <>
+                    <div className="max-w-fit overflow-scroll">
+                        <div className="inline-grid min-w-max grid-cols-5 gap-5">
+                            {gridItems.map((item) => (
+                                <div key={item} className="flex h-64 w-64 items-center justify-center bg-gray-200">
+                                    {item}
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                )}
-
-                {isWrongNetwork && <ConnectKitButton />}
-
-                {isRightNetwork && (
-                    <>
-                        <p>Right Network</p>
-                        <ConnectKitButton />
-                    </>
-                )}
-            </div>
+                    <ConnectKitButton />
+                </>
+            )}
         </main>
     )
 }
