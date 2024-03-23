@@ -108,6 +108,18 @@ contract GridCatanGame is Owned {
         return uint256(x) + uint256(y) * 5;
     }
 
+    function getPlayerResourceBalance(address player) public view returns (uint256[7] memory) {
+        return [
+            GridResource1155(gridResource1155).balanceOf(player, 0),
+            GridResource1155(gridResource1155).balanceOf(player, 1),
+            GridResource1155(gridResource1155).balanceOf(player, 2),
+            GridResource1155(gridResource1155).balanceOf(player, 3),
+            GridResource1155(gridResource1155).balanceOf(player, 4),
+            GridResource1155(gridResource1155).balanceOf(player, 5),
+            GridResource1155(gridResource1155).balanceOf(player, 6)
+        ];
+    }
+
     // ===== Setter funcs =====
     function landInitialize(uint256 landId, address _owner) public onlyGridLand721 {
         // initialize land type randomly with hash of block timestamp and id
