@@ -5,8 +5,7 @@ import "solmate/tokens/ERC1155.sol";
 import "solmate/auth/Owned.sol";
 import "openzeppelin/utils/Strings.sol";
 
-contract GridResource1155 is ERC1155, Owned
-{
+contract GridResource1155 is ERC1155, Owned {
     string private baseURI;
 
     // id mapping
@@ -27,7 +26,7 @@ contract GridResource1155 is ERC1155, Owned
     // Override the uri function to define how token URIs are determined
     function uri(uint256 id) public view override returns (string memory) {
         // Implement your logic to return the URI for token id
-        
+
         //return string(abi.encodePacked(baseURI, Strings.toString(id), ".json"));
         return string(abi.encodePacked(baseURI, Strings.toString(id)));
     }
@@ -40,22 +39,15 @@ contract GridResource1155 is ERC1155, Owned
     }
 
     // This function allows the contract owner to mint new tokens
-    function mint(
-        address to,
-        uint256 id,
-        uint256 amount,
-        bytes memory data
-    ) public onlyOwner {
+    function mint(address to, uint256 id, uint256 amount, bytes memory data) public onlyOwner {
         _mint(to, id, amount, data);
     }
 
     // This function allows the contract owner to mint batch tokens
-    function mintBatch(
-        address to,
-        uint256[] memory ids,
-        uint256[] memory amounts,
-        bytes memory data
-    ) public onlyOwner {
+    function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
+        public
+        onlyOwner
+    {
         _batchMint(to, ids, amounts, data);
     }
 
@@ -70,5 +62,4 @@ contract GridResource1155 is ERC1155, Owned
         require(account == msg.sender || isApprovedForAll[account][msg.sender], "Caller is not owner nor approved");
         _batchBurn(account, ids, amounts);
     }
-
 }

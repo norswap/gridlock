@@ -11,6 +11,7 @@ import type { Address } from "viem"
 export interface Deployment {
     GridLand721: Address
     GridResource1155: Address
+    GridCatanGame: Address
 }
 
 // NOTE: This silly `default` affair is required for running the e2e tests which cause

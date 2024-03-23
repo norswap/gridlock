@@ -15,20 +15,12 @@ contract GridLand721 is ERC721, Owned {
     string[25] public landURI;
     address public gridCatangame;
 
-    constructor(
-        string memory name, 
-        string memory symbol, 
-        uint256 _max_supply
-    ) 
-        ERC721(name, symbol) Owned(msg.sender) 
-    {
+    constructor(string memory name, string memory symbol, uint256 _max_supply) ERC721(name, symbol) Owned(msg.sender) {
         //baseURI = _baseURI;
         maxSupply = _max_supply;
     }
 
-    // ===== Internal Functions ===== 
-
-    
+    // ===== Internal Functions =====
 
     // ===== Setters =====
 
@@ -69,5 +61,4 @@ contract GridLand721 is ERC721, Owned {
     function getAllLandURIs() public view returns (string[25] memory) {
         return landURI;
     }
-
 }

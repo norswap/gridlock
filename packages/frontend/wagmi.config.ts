@@ -7,7 +7,7 @@ export default defineConfig({
         react(),
         foundry({
             project: "../contracts",
-            include: ["GridLand721.sol/**/*.json", "GridResource1155.sol/**/*.json"],
+            include: ["GridLand721.sol/**/*.json", "GridResource1155.sol/**/*.json", "GridCatanGame.sol/**/*.json"],
         }),
     ],
 })

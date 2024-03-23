@@ -5,14 +5,20 @@ import { ConnectKitButton, useModal } from "connectkit"
 import { useAccount } from "wagmi"
 
 import { chains } from "src/chain"
+import { Grid } from "src/components/Grid"
 import { Modal, showModal } from "src/components/modal"
 import { deployment } from "src/deployment"
-import { useReadGridLand721GetAllLandUrIs, useWriteGridLand721SetTokenUri } from "src/generated"
+import {
+    useReadGridCatanGameGetAllLandInfo,
+    useReadGridLand721GetAllLandUrIs,
+    useWriteGridLand721SetTokenUri,
+} from "src/generated"
 import { GridlockPage } from "src/pages/_app"
+import { LandInfo } from "src/types.js"
 import { pinataURL } from "src/utils/pinata"
 
 const Home: GridlockPage = ({ isHydrated }) => {
-    const { GridLand721, GridResource1155 } = deployment
+    const { GridLand721, GridResource1155, GridCatanGame } = deployment
 
     const { address, chain: accountChain } = useAccount()
     const { setOpen: setConnectKitModalOpen } = useModal()
@@ -39,6 +45,10 @@ const Home: GridlockPage = ({ isHydrated }) => {
 
     const { data: pictures } = useReadGridLand721GetAllLandUrIs({
         address: GridLand721,
+    })
+
+    const { data: tiles } = useReadGridCatanGameGetAllLandInfo({
+        address: GridCatanGame,
     })
 
     const { writeContract: setTokenURI } = useWriteGridLand721SetTokenUri()
@@ -75,58 +85,7 @@ const Home: GridlockPage = ({ isHydrated }) => {
 
             {isRightNetwork && (
                 <div className="h- flex flex-row gap-5 overflow-auto">
-                    <div className="max-w-fit overflow-scroll">
-                        <div className="inline-grid min-w-max grid-cols-5 gap-5">
-                            {Array.from({ length: 25 }).map((_, index) => (
-                                <div
-                                    key={index}
-                                    className="relative h-64 w-64 bg-gray-200 bg-cover"
-                                    // style={{ backgroundImage: `url('${pinataURL(cid)}')` }}
-                                    // style={{ backgroundImage: `url('../../art/terrain_wheat_fields.png')` }}
-                                    // style={{ backgroundImage: `url('../../art/terrain_tapioca_mountains.png')` }}
-                                    // style={{ backgroundImage: `url('../../art/terrain_sesame_farm.png')` }}
-                                    style={{ backgroundImage: `url('../../art/terrain_sugar_sugarcane.png')` }}
-                                >
-                                    <div className="absolute bottom-0 flex h-16 w-full flex-row bg-indigo-500 bg-opacity-75 p-1 justify-between">
-                                        {/*<img className="w-14 rounded-full border-2 border-black" src="/art/ingredient_milk.png" alt="Milk"/>*/}
-                                        <img
-                                            className="w-14 rounded-full border-2 border-black mr-6"
-                                            src="/art/ingredient_sugar.png"
-                                            alt="Sugar"
-                                            title="Sugar"
-                                        />
-                                        {/*<img className="w-14 rounded-full border-2 border-black" src="/art/ingredient_weirdtapioca.png" alt="Tapioca"/>*/}
-                                        {/*<img className="w-14 rounded-full border-2 border-black" src="/art/ingredient_sesame.png" alt="Sesame"/>*/}
-                                        {/*<img className="w-14 rounded-full border-2 border-black" src="/art/ingredient_flour.png" alt="Wheat"/>*/}
-
-
-                                        <div className="flex flex-row">
-                                            {/* Placeholder for workers */}
-                                        <img
-                                            className="w-14 rounded-full border-2 border-black"
-                                            src="/art/ingredient_sesame.png"
-                                            alt="Workers"
-                                            title="Workers"
-                                        />
-                                            <p className="text-2xl py-3 px-1">2</p>
-                                        </div>
-
-
-                                    <div className="flex flex-row">
-                                        {/* Placeholder for soldiers */}
-                                        <img
-                                            className="w-14 rounded-full border-2 border-black"
-                                            src="/art/ingredient_flour.png"
-                                            alt="Soldiers"
-                                            title="Soldiers"
-                                        />
-                                        <p className="text-2xl py-3 px-1">4</p>
-                                    </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                    <Grid tiles={tiles as readonly LandInfo[]} />
                     <div className="flex h-full w-96 min-w-96 flex-col">
                         <div className="mb-5 w-96 min-w-96 rounded-lg border-2 border-white p-5">
                             <p>Wheat: 1, Sugar: 1, Milk: 1, Sesame: 1, Tapioca: 1</p>

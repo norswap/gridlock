@@ -43,8 +43,6 @@ contract Deploy is Script {
 
         gridLand.setGridGameAddress(address(gridCatanGame));
 
-        log("gridCatanGame address in GridLand721 set to: ", gridLand.gridCatangame());
-
         vm.stopBroadcast();
 
         // Anvil first two test accounts.
