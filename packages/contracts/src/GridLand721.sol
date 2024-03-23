@@ -4,6 +4,7 @@ pragma solidity ^0.8.13;
 import "solmate/tokens/ERC721.sol";
 import "solmate/auth/Owned.sol";
 import "openzeppelin/utils/Strings.sol";
+import "./interfaces/IGridCatanGame.sol";
 
 contract GridLand721 is ERC721, Owned {
     string private baseURI;
@@ -11,6 +12,7 @@ contract GridLand721 is ERC721, Owned {
     uint256 public maxSupply = 25; // Max Land 5x5 square grid of lands
 
     string[25] public landURI;
+    address public gridCatangame;
 
     constructor(
         string memory name, 
@@ -35,9 +37,10 @@ contract GridLand721 is ERC721, Owned {
     }
 
     // Example function to mint a new token
-    function mint(address to, uint256 id) public onlyOwner {
+    function mint(address to, uint256 id) public {
         require(totalSupply < maxSupply, "Max supply reached");
         _mint(to, id);
+        IGridCatanGame(gridCatangame).landInitialize(id, to);
         totalSupply += 1; // Increment the total supply
     }
 
