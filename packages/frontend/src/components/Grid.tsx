@@ -1,7 +1,10 @@
-import { FC } from "react"
+import { FC, useCallback, useEffect, useState } from "react"
 
 import { ZeroAddress } from "src/chain"
 import { type LandInfo, LandType } from "src/types"
+import { useReadGridCatanGameGetAllLandInfo, useWriteGridLand721Mint } from "src/generated"
+import { deployment } from "src/deployment"
+import { useAccount, useWaitForTransactionReceipt } from "wagmi"
 
 interface GridProps {
     tiles: readonly LandInfo[]
@@ -10,11 +13,16 @@ interface GridProps {
 interface TileProps {
     index: number
     info: LandInfo
+    mintLand: (index: number) => void
 }
 
 const Tile: FC<TileProps> = (props) => {
     const x = ~~(props.index / 5)
     const y = props.index % 5
+
+    const mintLand = useCallback(() => {
+        props.mintLand(props.index)
+    }, [props.mintLand, props.index])
 
     let landImage = "terrain_wheat_fields"
     switch (props.info.landType) {
@@ -62,6 +70,8 @@ const Tile: FC<TileProps> = (props) => {
     }
     const resourceImageURL = `/art/${resourceImage}.png`
 
+    const isOwned = props.info.owner != ZeroAddress
+
     return (
         <div
             key={props.index}
@@ -69,7 +79,7 @@ const Tile: FC<TileProps> = (props) => {
             // style={{ backgroundImage: `url('${pinataURL(cid)}')` }}
             style={{ backgroundImage: landImageURL }}
         >
-            {props.info.owner != ZeroAddress && (
+            {isOwned && (
                 <div className="absolute bottom-0 flex h-16 w-full flex-row justify-between bg-indigo-500 bg-opacity-75 p-1">
                     <img
                         className="w-14 rounded-full border-2 border-black"
@@ -98,17 +108,48 @@ const Tile: FC<TileProps> = (props) => {
                     </div>
                 </div>
             )}
+            {!isOwned && (
+              <div
+                className="absolute bottom-0 flex h-16 w-full flex-row justify-center bg-indigo-500 bg-opacity-75 p-1">
+                  <button className="button m-1 w-52 !justify-center" onClick={mintLand}>Mint</button>
+              </div>
+            )}
         </div>
     )
 }
 
 export const Grid: FC<GridProps> = (props) => {
+    const { GridLand721, GridCatanGame } = deployment
+    const { address } = useAccount()
+    const [ tiles, setTiles ] = useState<readonly LandInfo[]>(props.tiles)
+
+    const { status, data: mintTxHash, writeContract: mintCall } = useWriteGridLand721Mint()
+    const mintLand = useCallback((id: number) => {
+        if (!address) return
+        mintCall({
+            address: GridLand721,
+            args: [address, BigInt(id)],
+        })
+    }, [address, mintCall])
+
+    const { isSuccess: mintTxConfirmed } = useWaitForTransactionReceipt({ hash: mintTxHash })
+
+    const { data: fetchedTiles, refetch } = useReadGridCatanGameGetAllLandInfo({
+        address: GridCatanGame,
+    })
+
+    useEffect(() => {
+        if (status === "success" && mintTxConfirmed) {
+            refetch()
+        }
+    }, [status, mintTxConfirmed, refetch])
+
     return (
         <div className="max-w-fit overflow-scroll">
             <div className="inline-grid min-w-max grid-cols-5 gap-5">
                 {props.tiles &&
                     Array.from({ length: 25 }).map((_, index) => (
-                        <Tile key={index} index={index} info={props.tiles[index]} />
+                        <Tile key={index} index={index} info={props.tiles[index]} mintLand={mintLand} />
                     ))}
             </div>
         </div>

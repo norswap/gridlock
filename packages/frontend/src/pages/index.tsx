@@ -1,6 +1,5 @@
 import { useCallback, useEffect } from "react"
 
-import { clsx } from "clsx"
 import { ConnectKitButton, useModal } from "connectkit"
 import { useAccount } from "wagmi"
 
@@ -15,10 +14,9 @@ import {
 } from "src/generated"
 import { GridlockPage } from "src/pages/_app"
 import { LandInfo } from "src/types.js"
-import { pinataURL } from "src/utils/pinata"
 
 const Home: GridlockPage = ({ isHydrated }) => {
-    const { GridLand721, GridResource1155, GridCatanGame } = deployment
+    const { GridLand721, GridCatanGame } = deployment
 
     const { address, chain: accountChain } = useAccount()
     const { setOpen: setConnectKitModalOpen } = useModal()
