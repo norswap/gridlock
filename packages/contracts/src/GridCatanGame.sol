@@ -22,7 +22,7 @@ contract GridCatanGame is Owned {
         uint256 totalSoldiers;
 
         uint256 attackingSoldiers;
-        Location destinationX;
+        Location destination;
         uint256 timeOfAttack;
         uint256 timeOfLastResourceCollect;
     }
@@ -63,7 +63,29 @@ contract GridCatanGame is Owned {
     }
     
     // ===== View funcs =====
+    function getLocation(uint256 landId) public pure returns (uint8, uint8){
+        return (
+            uint8(landId % 5),
+            uint8(landId / 5)
+        );
+    }
 
+    function getManhattanDistance(uint256 fromLandId, uint256 toLandId) public pure returns (uint256) {
+        (uint8 fromX, uint8 fromY) = getLocation(fromLandId);
+        (uint8 toX, uint8 toY) = getLocation(toLandId);
+
+        require(fromX < 5 && toX < 5, "X > width.");
+        require(fromY < 5 && toY < 5, "Y > height.");
+
+        // Calculate the absolute difference in x coordinates
+        uint256 dx = (fromX > toX) ? fromX - toX : toX - fromX;
+
+        // Calculate the absolute difference in y coordinates
+        uint256 dy = (fromY > toY) ? fromY - toY : toY - fromY;
+
+        // Return the sum of the absolute differences (Manhattan Distance)
+        return dx + dy;
+    }
 
     // ===== Setter funcs =====
     function landInitialize(uint256 landId, address _owner) public onlyGridLand721 {
@@ -73,18 +95,20 @@ contract GridCatanGame is Owned {
             keccak256(abi.encodePacked(landId, block.timestamp, _owner))[31]
         ) % 5;
         
+        (uint8 locationX, uint8 locationY) = getLocation(landId);
+
         landInfo[landId]= Land(
             {
             location: Location({
-                x: uint8(landId % 5),
-                y: uint8(landId / 5)
+                x: locationX,
+                y: locationY
             }),
             owner: _owner,
             landType: LandType(landtype),
             workers: 1,
             totalSoldiers: 0,
             attackingSoldiers: 0,
-            destinationX: Location({x: 99, y: 99}), // 99, 99 is an invalid location
+            destination: Location({x: 99, y: 99}), // 99, 99 is an invalid location
             timeOfAttack: 0,
             timeOfLastResourceCollect: block.timestamp
         });
@@ -197,6 +221,25 @@ contract GridCatanGame is Owned {
         );
         // update time of last resource collection
         landInfo[landId].timeOfLastResourceCollect = block.timestamp;
+    }
+
+    function attack(uint256 fromLandId, uint256 toLandId, uint256 attackSize) public {
+        // check if msg.sender is owner of fromLandId
+        require(msg.sender == landInfo[fromLandId].owner, "Not Land Owner");
+
+        // check if msg.sender has enough soldiers
+        require(landInfo[fromLandId].totalSoldiers >= attackSize, "Not enough soldiers");
+
+        // check if attacker has not already sent an attack
+        require(
+            landInfo[fromLandId].destination.x == 99 &&
+            landInfo[fromLandId].destination.y == 99
+        , "Already attacking");
+
+        // update attacking soldiers
+        landInfo[fromLandId].attackingSoldiers = attackSize;
+        landInfo[fromLandId].destination = landInfo[toLandId].location;
+        landInfo[fromLandId].timeOfAttack = block.timestamp;
     }
 
 
