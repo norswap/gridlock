@@ -8,10 +8,6 @@ import { getDefaultConfig, getDefaultConnectors } from "connectkit"
 import { createConfig } from "wagmi"
 import { type Chain, http } from "viem"
 import { localhost } from "wagmi/chains"
-import { getAccount, getPublicClient } from "wagmi/actions"
-
-
-import { BurnerConnector } from "src/wagmi/BurnerConnector.js"
 
 // =================================================================================================
 
@@ -50,8 +46,7 @@ const connectKitAppConfig = {
   },
 }
 
-
-const config = createConfig(
+export const wagmiConfig = createConfig(
   getDefaultConfig({
     // Your dApps chains
     chains,
@@ -65,72 +60,20 @@ const config = createConfig(
       ),
     },
 
-    // In dev, we probably want to use the ?index=X parameters, and autoconnect causes
-    // race conditions, leading to connecting via the parameter, disconnecting via autoconnect,
-    // then reconnecting via the parameter.
-    autoConnect: process.env.NODE_ENV !== "development",
-
     connectors: [
       ...getDefaultConnectors(connectKitAppConfig),
-      ...burnerConnectors],
+      ],
+      // ...burnerConnectors],
 
     // Options below are optional
     appDescription: APP_DESCRIPTION,
     // appUrl: "https://0xFable.org",
     // appIcon: "https://0xFable.org/logo.png", // app icon, no bigger than 1024x1024px & 1MB
   }),
-);
-
-// =================================================================================================
-// =================================================================================================
-// =================================================================================================
-
-
-// -------------------------------------------------------------------------------------------------
-
-/** Arrays containing the connector for using a local browser private key. */
-const burnerConnectors = process.env.NODE_ENV === "development" ? [new BurnerConnector()] : []
-
-// -------------------------------------------------------------------------------------------------
-
-const metadata = {
-  name: "0xFable",
-  description: "Wizards & shit",
-  // url: "https://0xFable.org",
-  // icon: "https://0xFable.org/favicon.png",
-}
-
-const metaConfig = {
-  walletConnectProjectId,
-  chains,
-  appName: metadata.name,
-  appDescription: metadata.description,
-  // appUrl: metadata.url,
-  // appIcon: metadata.icon,
-  app: metadata
-}
-
-/** Wagmi's configuration, to be passed to the React WagmiConfig provider. */
-export const wagmiConfig = createConfig(
-  getDefaultConfig({
-    ...metaConfig,
-    // In dev, we probably want to use the ?index=X parameters, and autoconnect causes
-    // race conditions, leading to connecting via the parameter, disconnecting via autoconnect,
-    // then reconnecting via the parameter.
-    autoConnect: process.env.NODE_ENV !== "development",
-    connectors: [
-      ...getDefaultConnectors(metaConfig),
-      //...burnerConnectors],
-    ]
-}))
+)
 
 // =================================================================================================
 // TYPES
-
-// -------------------------------------------------------------------------------------------------
-
-/** Type of EVM account addresses. */
-export type Address = `0x${string}`
 
 // -------------------------------------------------------------------------------------------------
 
@@ -147,24 +90,24 @@ export const ZeroHash: Hash = `0x${"0".repeat(64)}`
 /** `0x{string}` */
 export type HexString = `0x${string}`
 
+// =================================================================================================
+// BURNER CONNECTOR
+
+// TODO: broken right now, fix later
+
 // -------------------------------------------------------------------------------------------------
 
-/**
- * Simplification of wagmi's unexported GetAccountResult<TProvider>.
- */
-export type AccountResult = {
-  status: 'disconnected' | 'connecting' | 'connected' | 'reconnecting'
-  address?: Address
-}
+/** Arrays containing the connector for using a local browser private key. */
+// const burnerConnectors = process.env.NODE_ENV === "development" ? [new BurnerConnector()] : []
 
-// =================================================================================================
+// -------------------------------------------------------------------------------------------------
 
 /**
  * Ensures we're connected to the Anvil ("test ... junk" mnemonic) account with the given index,
  * disconnecting from another Wagmi connector if necessary.
  */
-export async function ensureLocalAccountIndex(index: number) {
-  await burnerConnectors[0].ensureConnectedToIndex(index)
-}
+// export async function ensureLocalAccountIndex(index: number) {
+//   await burnerConnectors[0].ensureConnectedToIndex(index)
+// }
 
 // =================================================================================================

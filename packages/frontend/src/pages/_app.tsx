@@ -9,7 +9,7 @@ import type { AppProps } from "next/app"
 import Head from "next/head"
 import { useAccount, WagmiProvider } from "wagmi"
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ensureLocalAccountIndex, wagmiConfig } from "src/chain"
+import { wagmiConfig } from "src/chain"
 // import jotaiDebug from "src/components/lib/jotaiDebug"
 // import { GlobalErrorModal } from "src/components/modals/globalErrorModal"
 // import { useIsHydrated } from "src/hooks/useIsHydrated"
