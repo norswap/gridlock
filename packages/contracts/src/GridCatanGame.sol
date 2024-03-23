@@ -22,9 +22,10 @@ contract GridCatanGame is Owned {
         uint256 workers;
         uint256 totalSoldiers;
 
-        uint256 attackingSoldiers;
-        Location destination;
-        uint256 timeOfAttack;
+        uint256 attackingSoldiers; //if 0 means not attacking
+        uint256 destinationId;
+        Location destination; // if x:99, y:99 means not attacking
+        uint256 timeOfAttack; // if 0 means not attacking
         uint256 timeOfLastResourceCollect;
     }
 
@@ -88,6 +89,25 @@ contract GridCatanGame is Owned {
         return dx + dy;
     }
 
+    function getArrivalTimeToDestination(uint256 fromLandId, uint256 toLandId) public view returns (uint256) {
+
+        // get attacking start time
+        uint256 startTime = landInfo[fromLandId].timeOfAttack;
+        require(startTime!=0, "Not attacking");
+
+        uint256 distance = getManhattanDistance(fromLandId, toLandId);
+        return (distance * travelTimePerDist) + startTime;
+    }
+
+    function getTimeToDestination(uint256 fromLandId, uint256 toLandId) public view returns (uint256){
+        return getArrivalTimeToDestination(fromLandId, toLandId) > block.timestamp ? 
+            getArrivalTimeToDestination(fromLandId, toLandId) - block.timestamp : 0;
+    }
+
+    function getLandIdFromXY(uint8 x, uint8 y) public pure returns (uint256) {
+        return uint256(x) + uint256(y) * 5;
+    }
+
     // ===== Setter funcs =====
     function landInitialize(uint256 landId, address _owner) public onlyGridLand721 {
         // initialize land type randomly with hash of block timestamp and id
@@ -109,6 +129,7 @@ contract GridCatanGame is Owned {
             workers: 1,
             totalSoldiers: 0,
             attackingSoldiers: 0,
+            destinationId: 99, // 99 is an invalid location (not attacking)
             destination: Location({x: 99, y: 99}), // 99, 99 is an invalid location
             timeOfAttack: 0,
             timeOfLastResourceCollect: block.timestamp
@@ -211,7 +232,7 @@ contract GridCatanGame is Owned {
 
     }
 
-    function collect(uint256 landId) public {
+    function harvest(uint256 landId) public {
         require(msg.sender == landInfo[landId].owner, "Not Land Owner");
         // collect
         uint256 availableResources = landInfo[landId].workers * (
@@ -243,12 +264,62 @@ contract GridCatanGame is Owned {
 
         // update attacking soldiers
         landInfo[fromLandId].attackingSoldiers = attackSize;
+        landInfo[fromLandId].destinationId = toLandId;
         landInfo[fromLandId].destination = landInfo[toLandId].location;
         landInfo[fromLandId].timeOfAttack = block.timestamp;
     }
 
-    function resolveAttack() public {
+    function resolveAttack(uint256 fromLandId) public {
+        // check if attacker has sent an attack
+        require(
+            landInfo[fromLandId].destination.x != 99 &&
+            landInfo[fromLandId].destination.y != 99
+        , "Not attacking");
 
+        // check if attacker has arrived at destination
+        require(
+            getTimeToDestination(fromLandId, landInfo[fromLandId].destinationId) == 0
+        , "Not arrived");
+
+        // get defender
+        uint256 toLandId = landInfo[fromLandId].destinationId;
+
+        // get attacking army size
+        uint256 attackingAmrySize = landInfo[fromLandId].attackingSoldiers;
+        // get attacker dice roll
+        uint256 attackerDiceRoll = uint256(keccak256(abi.encodePacked(block.timestamp, fromLandId, msg.sender))) % 6 + 1;
+        // get defending army size
+        uint256 defendingArmySize = landInfo[toLandId].totalSoldiers - landInfo[toLandId].attackingSoldiers;
+        // get defender dice roll
+        uint256 defenderDiceRoll = uint256(keccak256(abi.encodePacked(block.timestamp, toLandId, landInfo[toLandId].owner))) % 6 + 1;
+
+        // get winner landId
+        uint256 winnerLandId = attackerDiceRoll+attackingAmrySize > defenderDiceRoll+defendingArmySize ? fromLandId : toLandId;
+        //uint256 loserLandId = winnerLandId == fromLandId ? toLandId : fromLandId;
+
+        // resolve winner/loser resource gains/losses
+
+        // calculate how much resource winner gets
+        uint256 resourceReward = 0;
+        if (winnerLandId == fromLandId){
+            resourceReward = (attackingAmrySize - defendingArmySize) > 0 ? (attackingAmrySize - defendingArmySize) : 3*(defendingArmySize-attackingAmrySize);
+        } else {
+            resourceReward = (defendingArmySize - attackingAmrySize) > 0 ? (defendingArmySize - attackingAmrySize) : 3*(attackingAmrySize-defendingArmySize);
+        }
+
+        // mint resources to winner
+        GridResource1155(gridResource1155).mint(
+            landInfo[winnerLandId].owner, 
+            uint256(landInfo[toLandId].landType), 
+            resourceReward, 
+            ""
+        );
+
+        // reset attack stats
+        landInfo[fromLandId].attackingSoldiers = 0;
+        landInfo[fromLandId].destinationId = 99;
+        landInfo[fromLandId].destination = Location({x: 99, y: 99});
+        landInfo[fromLandId].timeOfAttack = 0;
     }
 
 
