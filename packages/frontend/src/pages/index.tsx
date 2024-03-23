@@ -9,6 +9,7 @@ import { deployment } from "src/deployment"
 import { useReadGridLand721GetAllLandUrIs, useWriteGridLand721SetTokenUri } from "src/generated"
 import { GridlockPage } from "src/pages/_app"
 import { Modal, showModal } from "src/components/modal"
+import { pinataURL } from "src/utils/pinata"
 
 const Home: GridlockPage = ({ isHydrated }) => {
     const { GridLand721, GridResource1155 } = deployment
@@ -22,6 +23,8 @@ const Home: GridlockPage = ({ isHydrated }) => {
     const notConnected = !isHydrated || !address
     const isRightNetwork = !notConnected && chainSupported
     // const isWrongNetwork = !notConnected && !chainSupported
+
+    const cid = "QmQHnT7k3XtWaMdn9FP7ZSMnh4FAu44hxDtpxLa6XjUKc5"
 
     useEffect(() => {
         // Close ConnectKit modal when the network is right
@@ -81,10 +84,8 @@ const Home: GridlockPage = ({ isHydrated }) => {
                             {Array.from({ length: 25 }).map((_, index) => (
                                 <div
                                     key={index}
-                                    className={clsx(
-                                        "flex h-64 w-64 items-center justify-center bg-gray-200 bg-cover",
-                                        "bg-[url('../../public/art/terrain_wheat_fields.png')]"
-                                    )}
+                                    className="flex h-64 w-64 items-center justify-center bg-gray-200 bg-cover"
+                                    style={{ backgroundImage: `url('${pinataURL(cid)}')` }}
                                 >
                                     {~~(index / 5)}, {index % 5}
                                 </div>
