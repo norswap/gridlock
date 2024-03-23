@@ -5,8 +5,12 @@ import { useAccount } from "wagmi"
 
 import { chains } from "src/chain"
 import { GridlockPage } from "src/pages/_app"
+import { useReadGridLand721GetAllLandUrIs } from "src/generated"
+import { deployment } from "src/deployment"
 
 const Home: GridlockPage = ({ isHydrated }) => {
+    const { GridLand721, GridResource1155 } = deployment
+
     const { address, chain: accountChain } = useAccount()
     const { setOpen: setConnectKitModalOpen } = useModal()
 
@@ -27,6 +31,12 @@ const Home: GridlockPage = ({ isHydrated }) => {
         // open it.
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isRightNetwork])
+
+    const {data: pictures } = useReadGridLand721GetAllLandUrIs({
+        address: GridLand721
+    })
+
+    console.log(pictures)
 
     const gridItems = Array.from({ length: 25 }, (_, index) => index + 1) // Create 25 items for the grid
 
@@ -51,7 +61,7 @@ const Home: GridlockPage = ({ isHydrated }) => {
             </div>
 
             {isRightNetwork && (
-                <>
+                <div className="flex h- flex-row gap-5 overflow-auto">
                     <div className="max-w-fit overflow-scroll">
                         <div className="inline-grid min-w-max grid-cols-5 gap-5">
                             {gridItems.map((item) => (
@@ -61,7 +71,22 @@ const Home: GridlockPage = ({ isHydrated }) => {
                             ))}
                         </div>
                     </div>
-                </>
+                    <div className="h-full w-96 min-w-96 border-white border-2 rounded-lg p-5">
+                        <h2 className="text-2xl text-yellow-500 pb-3">Land #1</h2>
+                        <p>Location: (0, 0)</p>
+                        <p>Owned by 0x1234567890</p>
+                        <p>Type: Pasture</p>
+                        <p>Collection Resources: 3</p>
+                        <p></p>
+                        <p>Workers: 2</p>
+                        <p>Total Soldiers: 5</p>
+                        <p className="pl-10">Attacking Soldiers: 2</p>
+                        <p className="pl-10">Defending Soldiers: 2</p>
+                        <p></p>
+                        <p>Destination: (1, 1)</p>
+                        <p>Time to Arrival: 12s</p>
+                    </div>
+                </div>
             )}
         </main>
     )
