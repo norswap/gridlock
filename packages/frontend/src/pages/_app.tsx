@@ -43,17 +43,17 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
                 <title>0xFable</title>
 
                 {/* Favicon
-          <link rel="shortcut icon" href="/favicon.png" />
-        /*}
+                    <link rel="shortcut icon" href="/favicon.png" />
+                /*}
 
-        {/* Custom Font
-          <link
-            href="/font/BluuNext-Bold.otf"
-            as="font"
-            type="font/otf"
-            crossOrigin="anonymous"
-          />
-        */}
+                {/* Custom Font
+                    <link
+                        href="/font/BluuNext-Bold.otf"
+                        as="font"
+                        type="font/otf"
+                        crossOrigin="anonymous"
+                    />
+                */}
             </Head>
 
             {isHydrated && (
