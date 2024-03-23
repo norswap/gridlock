@@ -24,7 +24,9 @@ const Tile: FC<TileProps> = (props) => {
         props.mintLand(props.index)
     }, [props.mintLand, props.index])
 
-    let landImage = "terrain_wheat_fields"
+
+
+    let landImage = ""
     switch (props.info.landType) {
         case LandType.SUGAR:
             landImage = "terrain_sugar_sugarcane"
@@ -41,6 +43,9 @@ const Tile: FC<TileProps> = (props) => {
         case LandType.WHEAT:
             landImage = "terrain_wheat_fields"
             break
+    }
+    if (props.info.owner == ZeroAddress) {
+        landImage = "uncharted_territory"
     }
     const landImageURL = `url('/art/${landImage}.png')`
 
