@@ -15,7 +15,7 @@ const Home: GridlockPage = ({ isHydrated }) => {
     // These three states are mutually exclusive. One of them is always true.
     const notConnected = !isHydrated || !address
     const isRightNetwork = !notConnected && chainSupported
-    const isWrongNetwork = !notConnected && !chainSupported
+    // const isWrongNetwork = !notConnected && !chainSupported
 
     useEffect(() => {
         // Close ConnectKit modal when the network is right
@@ -32,20 +32,23 @@ const Home: GridlockPage = ({ isHydrated }) => {
 
     return (
         <main className="flex h-screen flex-col gap-y-10 px-10 py-10">
-            <h1 className="font-serif text-7xl font-extrabold tracking-tight text-white">
-                <span className="font-mono font-light text-red-400">Grid</span>lock
-            </h1>
+            <div className="flew-row flex justify-between">
+                <h1 className="font-serif text-7xl font-extrabold tracking-tight text-white">
+                    <span className="font-mono font-light text-red-400">Grid</span>lock
+                </h1>
 
-            {notConnected && (
-                <button
-                    className="btn w-64 border-yellow-500 hover:border-orange-500 hover:text-orange-500"
-                    onClick={async () => setConnectKitModalOpen(true)}
-                >
-                    ConnectWallet
-                </button>
-            )}
-
-            {isWrongNetwork && <ConnectKitButton />}
+                <div className="pt-5">
+                    {notConnected && (
+                        <button
+                            className="btn w-64 border-yellow-500 hover:border-orange-500 hover:text-orange-500"
+                            onClick={async () => setConnectKitModalOpen(true)}
+                        >
+                            ConnectWallet
+                        </button>
+                    )}
+                    {!notConnected && <ConnectKitButton />}
+                </div>
+            </div>
 
             {isRightNetwork && (
                 <>
@@ -58,7 +61,6 @@ const Home: GridlockPage = ({ isHydrated }) => {
                             ))}
                         </div>
                     </div>
-                    <ConnectKitButton />
                 </>
             )}
         </main>
