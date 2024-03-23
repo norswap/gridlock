@@ -4,10 +4,12 @@ const config = {
     parser: "@typescript-eslint/parser",
     parserOptions: {
         project: "./tsconfig.json",
+        sourceType: "module",
+        ecmaVersion: "latest",
     },
-    plugins: ["@typescript-eslint"],
+    plugins: ["@typescript-eslint", "simple-import-sort"],
     root: true,
-    ignorePatterns: ["node_modules", "src/hooks/useScrollBox.ts"],
+    ignorePatterns: ["node_modules", "src/generated.ts"],
     rules: {
         "@typescript-eslint/no-unsafe-argument": "off",
         "@typescript-eslint/restrict-template-expressions": "off",
@@ -15,6 +17,13 @@ const config = {
         "@typescript-eslint/no-empty-function": "off",
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/ban-ts-comment": "off",
+        "no-restricted-imports": "off",
+        "@typescript-eslint/no-restricted-imports": [
+            "error",
+            {
+                patterns: ["./*", "../*"],
+            },
+        ],
 
         "no-unused-vars": "off",
         "@typescript-eslint/no-unused-vars": [
@@ -24,6 +33,30 @@ const config = {
                 argsIgnorePattern: "^_",
                 varsIgnorePattern: "^_",
                 caughtErrorsIgnorePattern: "^_",
+            },
+        ],
+        "import/first": "error",
+        "import/newline-after-import": "error",
+        "import/no-duplicates": "error",
+        "simple-import-sort/imports": [
+            "error",
+            {
+                groups: [
+                    // Packages. `react` related packages come first.
+                    ["^react", "^next"],
+                    // External packages.
+                    ["^@?\\w"],
+                    // Custom group for src/ prefixed imports
+                    ["^src/"],
+                    // Parent imports. Put `..` last.
+                    ["^\\.\\.(?!/?$)", "^\\.\\./?$"],
+                    // Other relative imports. Put same-folder imports and `.` last.
+                    ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
+                    // Style imports.
+                    ["^.+\\.s?css$"],
+                    // Side effect imports.
+                    ["^\\u0000"],
+                ],
             },
         ],
     },
