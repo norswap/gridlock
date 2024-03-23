@@ -8,7 +8,8 @@ contract GridCatanGame is Owned {
 
     address public gridLand721;
     address public gridResource1155;
-    uint256 public resourceEpoch;
+    uint256 public resourceEpoch =2;
+    uint256 public travelTimePerDist=10;
 
     struct Location {
         uint8 x;
@@ -117,6 +118,10 @@ contract GridCatanGame is Owned {
 
     function setResourceEpoch(uint256 _resourceEpoch) public onlyOwner {
         resourceEpoch = _resourceEpoch;
+    }
+
+    function setTimePerDist(uint256 _travelTimePerDist) public onlyOwner {
+        travelTimePerDist = _travelTimePerDist;
     }
 
     function craft(
@@ -240,6 +245,10 @@ contract GridCatanGame is Owned {
         landInfo[fromLandId].attackingSoldiers = attackSize;
         landInfo[fromLandId].destination = landInfo[toLandId].location;
         landInfo[fromLandId].timeOfAttack = block.timestamp;
+    }
+
+    function resolveAttack() public {
+
     }
 
 
