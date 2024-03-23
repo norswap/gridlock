@@ -4,7 +4,8 @@ pragma solidity ^0.8.13;
 import "solmate/tokens/ERC721.sol";
 import "solmate/auth/Owned.sol";
 import "openzeppelin/utils/Strings.sol";
-import "./interfaces/IGridCatanGame.sol";
+//import "./interfaces/IGridCatanGame.sol";
+import "./GridCatanGame.sol";
 
 contract GridLand721 is ERC721, Owned {
     string private baseURI;
@@ -40,7 +41,7 @@ contract GridLand721 is ERC721, Owned {
     function mint(address to, uint256 id) public {
         require(totalSupply < maxSupply, "Max supply reached");
         _mint(to, id);
-        IGridCatanGame(gridCatangame).landInitialize(id, to);
+        GridCatanGame(gridCatangame).landInitialize(id, to);
         totalSupply += 1; // Increment the total supply
     }
 
