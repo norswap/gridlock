@@ -5,10 +5,10 @@ import { ConnectKitButton, useModal } from "connectkit"
 import { useAccount } from "wagmi"
 
 import { chains } from "src/chain"
+import { Modal, showModal } from "src/components/modal"
 import { deployment } from "src/deployment"
 import { useReadGridLand721GetAllLandUrIs, useWriteGridLand721SetTokenUri } from "src/generated"
 import { GridlockPage } from "src/pages/_app"
-import { Modal, showModal } from "src/components/modal"
 import { pinataURL } from "src/utils/pinata"
 
 const Home: GridlockPage = ({ isHydrated }) => {
@@ -53,10 +53,6 @@ const Home: GridlockPage = ({ isHydrated }) => {
         [setTokenURI]
     )
 
-    function displaySetPictureModal() {
-        console.log("set picture modalS")
-    }
-
     return (
         <main className="flex h-screen flex-col gap-y-10 px-10 py-10">
             <div className="flew-row flex justify-between">
@@ -84,23 +80,62 @@ const Home: GridlockPage = ({ isHydrated }) => {
                             {Array.from({ length: 25 }).map((_, index) => (
                                 <div
                                     key={index}
-                                    className="flex h-64 w-64 items-center justify-center bg-gray-200 bg-cover"
-                                    style={{ backgroundImage: `url('${pinataURL(cid)}')` }}
+                                    className="relative h-64 w-64 bg-gray-200 bg-cover"
+                                    // style={{ backgroundImage: `url('${pinataURL(cid)}')` }}
+                                    // style={{ backgroundImage: `url('../../art/terrain_wheat_fields.png')` }}
+                                    // style={{ backgroundImage: `url('../../art/terrain_tapioca_mountains.png')` }}
+                                    // style={{ backgroundImage: `url('../../art/terrain_sesame_farm.png')` }}
+                                    style={{ backgroundImage: `url('../../art/terrain_sugar_sugarcane.png')` }}
                                 >
-                                    {~~(index / 5)}, {index % 5}
+                                    <div className="absolute bottom-0 flex h-16 w-full flex-row bg-indigo-500 bg-opacity-75 p-1 justify-between">
+                                        {/*<img className="w-14 rounded-full border-2 border-black" src="/art/ingredient_milk.png" alt="Milk"/>*/}
+                                        <img
+                                            className="w-14 rounded-full border-2 border-black mr-6"
+                                            src="/art/ingredient_sugar.png"
+                                            alt="Sugar"
+                                            title="Sugar"
+                                        />
+                                        {/*<img className="w-14 rounded-full border-2 border-black" src="/art/ingredient_weirdtapioca.png" alt="Tapioca"/>*/}
+                                        {/*<img className="w-14 rounded-full border-2 border-black" src="/art/ingredient_sesame.png" alt="Sesame"/>*/}
+                                        {/*<img className="w-14 rounded-full border-2 border-black" src="/art/ingredient_flour.png" alt="Wheat"/>*/}
+
+
+                                        <div className="flex flex-row">
+                                            {/* Placeholder for workers */}
+                                        <img
+                                            className="w-14 rounded-full border-2 border-black"
+                                            src="/art/ingredient_sesame.png"
+                                            alt="Workers"
+                                            title="Workers"
+                                        />
+                                            <p className="text-2xl py-3 px-1">2</p>
+                                        </div>
+
+
+                                    <div className="flex flex-row">
+                                        {/* Placeholder for soldiers */}
+                                        <img
+                                            className="w-14 rounded-full border-2 border-black"
+                                            src="/art/ingredient_flour.png"
+                                            alt="Soldiers"
+                                            title="Soldiers"
+                                        />
+                                        <p className="text-2xl py-3 px-1">4</p>
+                                    </div>
+                                    </div>
                                 </div>
                             ))}
                         </div>
                     </div>
-                    <div className="flex flex-col h-full w-96 min-w-96">
-                        <div className="w-96 min-w-96 rounded-lg border-2 border-white p-5 mb-5">
+                    <div className="flex h-full w-96 min-w-96 flex-col">
+                        <div className="mb-5 w-96 min-w-96 rounded-lg border-2 border-white p-5">
                             <p>Wheat: 1, Sugar: 1, Milk: 1, Sesame: 1, Tapioca: 1</p>
                             <p>Boba: 1, Sesame Bun: 1</p>
                         </div>
                         {/* TODO: right-side corners are not rounded in the presence of a scrollbar */}
-                        <div
-                          className="overflow-auto rounded-lg border-2 border-white p-5">
+                        <div className="overflow-auto rounded-lg border-2 border-white p-5">
                             <h2 className="pb-3 text-2xl text-yellow-500">Land #1</h2>
+                            {/*{~~(index / 5)}, {index % 5}*/}
                             <p>Location: (0, 0)</p>
                             <p>Owned by 0x1234567890</p>
                             <p>Type: Pasture</p>
