@@ -29,8 +29,8 @@ export const walletConnectProjectId = "8934622f70e11b51de893ea309871a4c"
 // =================================================================================================
 // =================================================================================================
 
-const APP_NAME = "0xFable"
-const APP_DESCRIPTION = "Wizards & shit"
+const APP_NAME = "Gridlock"
+const APP_DESCRIPTION = "Geographic Resource Interactive Device"
 // const APP_URL = "https://0xFable.org/"
 // const APP_ICON = "https://0xFable.org/logo.png"
 

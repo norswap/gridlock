@@ -29,7 +29,7 @@ import "src/store/setup"
  * Make pages in the app conform to this type.
  * See [@link useIsHydrated] for more info on the meaning of the `isHydrated` prop.
  */
-export type FablePage = NextPage<{ isHydrated: boolean }>
+export type GridlockPage = NextPage<{ isHydrated: boolean }>
 
 // =================================================================================================
 
@@ -40,7 +40,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     return (
         <>
             <Head>
-                <title>0xFable</title>
+                <title>Gridlock</title>
 
                 {/* Favicon
                     <link rel="shortcut icon" href="/favicon.png" />

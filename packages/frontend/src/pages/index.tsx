@@ -2,10 +2,10 @@ import { ConnectKitButton, useModal } from "connectkit"
 import { useAccount } from "wagmi"
 
 import { chains } from "src/chain"
-import { FablePage } from "src/pages/_app.js"
+import { GridlockPage } from "src/pages/_app.js"
 import { useEffect } from "react"
 
-const Home: FablePage = ({ isHydrated }) => {
+const Home: GridlockPage = ({ isHydrated }) => {
     const { address, chain: accountChain } = useAccount()
     const { setOpen: setConnectKitModalOpen } = useModal()
 
@@ -31,7 +31,7 @@ const Home: FablePage = ({ isHydrated }) => {
         <main className="flex min-h-screen flex-col items-center justify-center">
             <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
                 <h1 className="font-serif text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-                    <span className="font-mono font-light text-red-400">0x</span>FABLE
+                    <span className="font-mono font-light text-red-400">Grid</span>lock
                 </h1>
 
                 {notConnected && (

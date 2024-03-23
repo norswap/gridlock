@@ -1,6 +1,6 @@
 {
-  "name": "@firestarter/monorepo",
-  "author": "Norswap",
+  "name": "@gridlock/monorepo",
+  "author": "Gridlock Team",
   "license": "BSD-3-Clause-Clear",
   "version": "1.0.0",
   "private": true,
