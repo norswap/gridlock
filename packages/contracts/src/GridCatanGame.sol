@@ -252,6 +252,7 @@ contract GridCatanGame is Owned {
     function attack(uint256 fromLandId, uint256 toLandId, uint256 attackSize) public {
         // check if msg.sender is owner of fromLandId
         require(msg.sender == landInfo[fromLandId].owner, "Not Land Owner");
+        require(attackSize>0, "Cannot attack with no army");
 
         // check if msg.sender has enough soldiers
         require(landInfo[fromLandId].totalSoldiers >= attackSize, "Not enough soldiers");
@@ -302,9 +303,9 @@ contract GridCatanGame is Owned {
         // calculate how much resource winner gets
         uint256 resourceReward = 0;
         if (winnerLandId == fromLandId){
-            resourceReward = (attackingAmrySize - defendingArmySize) > 0 ? (attackingAmrySize - defendingArmySize) : 3*(defendingArmySize-attackingAmrySize);
+            resourceReward = (attackingAmrySize - defendingArmySize) > 0 ? (attackingAmrySize - defendingArmySize) : 3;
         } else {
-            resourceReward = (defendingArmySize - attackingAmrySize) > 0 ? (defendingArmySize - attackingAmrySize) : 3*(attackingAmrySize-defendingArmySize);
+            resourceReward = (defendingArmySize - attackingAmrySize) > 0 ? (defendingArmySize - attackingAmrySize) : 3;
         }
 
         // mint resources to winner
