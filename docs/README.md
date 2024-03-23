@@ -1,3 +1,3 @@
-# Firestarter Docs Index
+# Gridlock Docs Index
 
 <design goes here>

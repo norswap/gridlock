@@ -1,4 +1,4 @@
-# Firestarter
+# Gridlock
 
 Web3 project temmplate.
 

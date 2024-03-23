@@ -2,15 +2,14 @@
  * Implementation of a Wagmi connector for a private key held in local browser storage.
  */
 
-import { Connector, createConnector, WalletClient } from "wagmi"
-import { Address } from "src/chain"
+// TODO completely broken with wagmi v2, just fixed it up to that it at least compiles, fix later
+
+import { Address, Client, createWalletClient, http } from "viem"
 import { PrivateKeyAccount, privateKeyToAccount } from "viem/accounts"
-import { createWalletClient, http } from "viem"
-import { localhost } from "wagmi/chains"
 import { connect, disconnect, getAccount } from "wagmi/actions"
-import { AsyncLock } from "src/utils/asyncLock"
-import { Emitter } from "@wagmi/core/dist/types/createEmitter.js"
-import type { ConnectorEventMap } from "@wagmi/core/dist/types/connectors/createConnector.js"
+import { localhost } from "wagmi/chains"
+
+import { wagmiConfig } from "src/chain.js"
 
 // =================================================================================================
 
@@ -35,11 +34,12 @@ const privateKeys: PrivateKey[] = [
 
 // =================================================================================================
 
-export function createBurnerConnector() {
-    return createConnector((config) => {
-        return new BurnerConnector()
-    })
-}
+// export function createBurnerConnector() {
+//     return createConnector((config) => {
+//         const connector = new BurnerConnector(config.emitter as any) as BurnerConnector & Record<string, unknown>
+//         return connector
+//     })
+// }
 
 type ConnectOptions = {
     chainId?: number | undefined
@@ -51,65 +51,49 @@ type ConnectReturn = {
     chainId: number
 }
 
+type Emitter = {
+    emit: (eventName: string, ...params: any[]) => void
+}
+
 /**
  * Wagmi connector for a private key held in local browser storage.
  *
  * Right now, we're testing this with a hardcoded Anvil private key.
  */
 export class BurnerConnector {
+    // CONNECTOR FIELD REFERENCE
 
-    // Connector fields
     // https://github.com/wevm/wagmi/blob/a86aaab8f19a4f1288e74ab3239ccb0c8977672c/packages/core/src/connectors/createConnector.ts
+    // https://github.com/wevm/wagmi/blob/a86aaab8f19a4f1288e74ab3239ccb0c8977672c/packages/core/src/createConfig.ts#L530-L533
 
-//     getProvider(
-//       parameters?: { chainId?: number | undefined } | undefined,
-//     ): Promise<provider>
-//     getClient?(
-//       parameters?: { chainId?: number | undefined } | undefined,
-//     ): Promise<Client>
-//     isAuthorized(): Promise<boolean>
-//     switchChain?(parameters: { chainId: number }): Promise<Chain>
-//
-//     onAccountsChanged(accounts: string[]): void
-//     onChainChanged(chainId: string): void
-//     onConnect?(connectInfo: ProviderConnectInfo): void
-//     onDisconnect(error?: Error | undefined): void
-//     onMessage?(message: ProviderMessage): void
-// } & properties
-
-    // emitter: Emitter<ConnectorEventMap>;
-    // uid: string;
+    // CONNECTOR API PROPERTIES
 
     readonly id = "0xFable-burner"
     readonly name = "0xFable Burner Wallet"
     readonly type = "burner"
-    // TODO "burner" as const ?
-    ready = false
 
-    // optional
+    // OPTIONAL CONNECTOR API PROPERTIES
+
     // readonly icon = "https://0xFable.org/logo.png"
 
-    // optinal functions
-    // setup?(): Promise<void>
+    // ADDITIONAL PROPERTIES
+
+    ready = false
+    emitter: Emitter = undefined as any
 
     #chain = localhost
     #connected = false
-    #connectLock = new AsyncLock()
+    // TODO
+    // #connectLock = new AsyncLock()
     #privKey: PrivateKey = undefined as any
     #account: PrivateKeyAccount = undefined as any
-    #walletClient: WalletClient = undefined as any
+    #walletClient: Client = undefined as any
 
-    private setKey(privkey: PrivateKey) {
-        this.#privKey = privkey
-        this.#account = privateKeyToAccount(this.#privKey)
-        this.#walletClient = createWalletClient({
-            account: this.#account,
-            chain: this.#chain,
-            transport: http(),
-        })
-        this.ready = true
-        if (this.#connected) this.onAccountsChanged([this.#account.address])
+    constructor(emitter: Emitter) {
+        this.emitter = emitter
     }
+
+    // CONNECTOR API METHOD IMPLEMENTATION
 
     async getAccounts(): Promise<readonly Address[]> {
         return [this.#account.address]
@@ -127,13 +111,45 @@ export class BurnerConnector {
         return true
     }
 
-    async getWalletClient(_config: { chainId?: number } | undefined): Promise<WalletClient> {
+    async getClient(_config: { chainId?: number } | undefined): Promise<Client> {
         return this.#walletClient
     }
 
-//     getClient?(
-//       parameters?: { chainId?: number | undefined } | undefined,
-//     ): Promise<Client>
+    // TODO should be string?
+    onAccountsChanged(_accounts: Address[]): void {
+        this.emitter.emit("change", { account: this.#account.address })
+    }
+
+    onChainChanged(_chainId: string): void {
+        this.emitter.emit("change", {
+            chain: { id: this.#chain.id, unsupported: false },
+        })
+    }
+
+    onDisconnect(_error: Error | undefined): void {
+        this.emitter.emit("disconnect")
+    }
+
+    // OPTIONAL CONNECTOR API METHODS
+
+    // setup?(): Promise<void>
+    // switchChain?(parameters: { chainId: number }): Promise<Chain>
+    // onConnect?(connectInfo: ProviderConnectInfo): void
+    // onMessage?(message: ProviderMessage): void
+
+    // IMPLEMENTATION METHODS
+
+    private setKey(privkey: PrivateKey) {
+        this.#privKey = privkey
+        this.#account = privateKeyToAccount(this.#privKey)
+        this.#walletClient = createWalletClient({
+            account: this.#account,
+            chain: this.#chain,
+            transport: http(),
+        })
+        this.ready = true
+        if (this.#connected) this.onAccountsChanged([this.#account.address])
+    }
 
     /**
      * Ensure that this connector is used to connect to one of the Anvil ("test ... junk" mnemonic)
@@ -142,7 +158,7 @@ export class BurnerConnector {
     async ensureConnectedToIndex(keyIndex: number) {
         if (keyIndex < 0 || keyIndex >= privateKeys.length) throw new Error(`Invalid private key index: ${keyIndex}`)
 
-        if (getAccount().address !== this.#account?.address)
+        if (getAccount(wagmiConfig).address !== this.#account?.address)
             // Necessary because Web3Connect (possibly others) don't play nice with others and don't
             // disconnect before connecting.
             this.#connected = false
@@ -156,39 +172,25 @@ export class BurnerConnector {
 
         if (this.#privKey !== privateKeys[keyIndex]) this.setKey(privateKeys[keyIndex])
 
-        await this.#connectLock.protect(async () => {
-            if (!this.#connected) {
-                // The next two functions are wagmi actions, not methods of this class!
+        // TODO
+        // await this.#connectLock.protect(async () => {
+        if (!this.#connected) {
+            // The next two functions are wagmi actions, not methods of this class!
 
-                // Unconditional disconnet to avoid issues: `getAccount().isConnect == false`
-                // but we still get an `AlreadyConnectedException` if we don't disconnect.
-                await disconnect()
-                await connect({ connector: this })
-            }
-        })
+            // Unconditional disconnet to avoid issues: `getAccount().isConnect == false`
+            // but we still get an `AlreadyConnectedException` if we don't disconnect.
+            await disconnect(wagmiConfig)
+            await connect(wagmiConfig, { connector: this as any }) // TODO
+        }
+        // })
     }
 
-    // async connect(_config: { chainId?: number } | undefined): Promise<Required<ConnectorData>> {
-    //     const data = {
-    //         chain: {
-    //             id: this.#chain.id,
-    //             unsupported: false,
-    //         },
-    //         account: this.#account.address,
-    //     }
-    //     this.emit("connect", data)
-    //     this.#connected = true
-    //     this.onAccountsChanged([this.#account.address])
-    //     return data
-    // }
-
-    async connect(parameters: ConnectOptions): Promise<ConnectReturn> {
+    async connect(_parameters: ConnectOptions): Promise<ConnectReturn> {
         const data = {
             chainId: this.#chain.id,
-            accounts: [this.#account.address]
+            accounts: [this.#account.address],
         }
-        // TODO
-        // this.emit("connect", data)
+        this.emitter.emit("connect", data)
         this.#connected = true
         this.onAccountsChanged([this.#account.address])
         return data
@@ -197,18 +199,6 @@ export class BurnerConnector {
     async disconnect(): Promise<void> {
         this.#connected = false
         return
-    }
-
-    protected onAccountsChanged(_accounts: Address[]): void {
-        this.emit("change", { account: this.#account.address })
-    }
-
-    protected onChainChanged(_chain: number | string): void {
-        this.emit("change", { chain: { id: this.#chain.id, unsupported: false } })
-    }
-
-    protected onDisconnect(_error: Error): void {
-        this.emit("disconnect")
     }
 }
 
