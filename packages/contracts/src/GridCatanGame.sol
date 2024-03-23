@@ -184,12 +184,21 @@ contract GridCatanGame is Owned {
 
         // mint boba
         if (minOfSugarMilkTapioca>0){
+            uint256[] memory resourceIds = new uint256[](3);
+            resourceIds[0] = 0; // Sugar
+            resourceIds[1] = 1; // Milk
+            resourceIds[2] = 2; // Tapioca
+
+            uint256[] memory amounts = new uint256[](3);
+            amounts[0] = minOfSugarMilkTapioca;
+            amounts[1] = minOfSugarMilkTapioca;
+            amounts[2] = minOfSugarMilkTapioca;
 
             // burn resources for boba
             GridResource1155(gridResource1155).burnBatch(
                 msg.sender, 
-                [0, 1, 2], 
-                minOfSugarMilkTapioca
+                resourceIds, 
+                amounts
             );
             
             GridResource1155(gridResource1155).mint(
@@ -209,12 +218,21 @@ contract GridCatanGame is Owned {
 
         // mint sesame bun
         if (minOfSugarWheatSesame>0){
-            
+            uint256[] memory resourceIds = new uint256[](3);
+            resourceIds[0] = 0; // Sugar
+            resourceIds[1] = 3; // Wheat
+            resourceIds[2] = 4; // Sesame
+
+            uint256[] memory amounts = new uint256[](3);
+            amounts[0] = minOfSugarWheatSesame;
+            amounts[1] = minOfSugarWheatSesame;
+            amounts[2] = minOfSugarWheatSesame;
+
             // burn resources for sesame bun
             GridResource1155(gridResource1155).burnBatch(
                 msg.sender, 
-                [0, 3, 4], 
-                minOfSugarWheatSesame
+                resourceIds, 
+                amounts
             );
 
             // mint sesame bun
@@ -239,11 +257,21 @@ contract GridCatanGame is Owned {
             "Not enough resources"
         );
 
+        uint256[] memory resourceIds = new uint256[](3);
+        resourceIds[0] = 0; // Sugar
+        resourceIds[1] = 1; // Milk
+        resourceIds[2] = 2; // Tapioca
+
+        uint256[] memory amounts = new uint256[](3);
+        amounts[0] = _boba;
+        amounts[1] = _boba;
+        amounts[2] = _boba;
+
         // burn resources for Boba
         GridResource1155(gridResource1155).burnBatch(
             msg.sender, 
-            [0, 1, 2], 
-            _boba
+            resourceIds, 
+            amounts
         );
 
         // mint boba
@@ -267,11 +295,21 @@ contract GridCatanGame is Owned {
             "Not enough resources"
         );
 
+        uint256[] memory resourceIds = new uint256[](3);
+        resourceIds[0] = 0; // Sugar
+        resourceIds[1] = 3; // Wheat
+        resourceIds[2] = 4; // Sesame
+
+        uint256[] memory amounts = new uint256[](3);
+        amounts[0] = _bun;
+        amounts[1] = _bun;
+        amounts[2] = _bun;
+
         // burn resources for bun
         GridResource1155(gridResource1155).burnBatch(
             msg.sender, 
-            [0, 3, 4], 
-            _bun
+            resourceIds, 
+            amounts
         );
 
         // mint boba
