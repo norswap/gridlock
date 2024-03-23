@@ -61,13 +61,13 @@ contract GridResource1155 is ERC1155, Owned
 
     // Function to burn a single type of token
     function burn(address account, uint256 id, uint256 amount) public {
-        require(account == msg.sender || isApprovedForAll(account, msg.sender), "Caller is not owner nor approved");
+        require(account == msg.sender || isApprovedForAll[account][msg.sender], "Caller is not owner nor approved");
         _burn(account, id, amount);
     }
 
     // Function to burn multiple types of tokens in a single call
     function burnBatch(address account, uint256[] memory ids, uint256[] memory amounts) public {
-        require(account == msg.sender || isApprovedForAll(account, msg.sender), "Caller is not owner nor approved");
+        require(account == msg.sender || isApprovedForAll[account][msg.sender], "Caller is not owner nor approved");
         _batchBurn(account, ids, amounts);
     }
 

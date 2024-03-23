@@ -10,26 +10,22 @@ contract GridLand721 is ERC721, Owned {
     uint256 public totalSupply;
     uint256 public maxSupply = 25; // Max Land 5x5 square grid of lands
 
-    string[maxSupply] public landURI;
+    string[25] public landURI;
 
     constructor(
         string memory name, 
         string memory symbol, 
-        string memory _baseURI,
-        string memory _max_supply
+        uint256 _max_supply
     ) 
         ERC721(name, symbol) Owned(msg.sender) 
     {
-        baseURI = _baseURI;
-        max_supply = _max_supply;
+        //baseURI = _baseURI;
+        maxSupply = _max_supply;
     }
 
     // ===== Internal Functions ===== 
 
-    // Override the _baseURI function to return the base URI
-    function _baseURI() internal view override returns (string memory) {
-        return baseURI;
-    }
+    
 
     // ===== Setters =====
 
