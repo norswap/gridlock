@@ -3,7 +3,7 @@
 #   To get the project running locally.
 
 # To be run when first setting up the repository.
-setup: install-frozen
+setup: install-frozen init-modules
 	cd packages/contracts && make setup
 .PHONY: setup
 
