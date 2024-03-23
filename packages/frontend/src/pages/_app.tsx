@@ -17,6 +17,7 @@ import { wagmiConfig } from "src/chain"
 // import "src/styles/globals.css"
 import { useRouter } from "next/router"
 import { ComponentType, useEffect } from "react"
+import { useIsHydrated } from "src/hooks/useIsHydrated"
 // import { Toaster } from "src/components/ui/sonner"
 
 // =================================================================================================
@@ -32,9 +33,9 @@ export type FablePage = NextPage<{ isHydrated: boolean }>
 const MyApp = ({ Component, pageProps }: AppProps) => {
 
   const queryClient = new QueryClient()
+  const isHydrated = useIsHydrated()
 
-  return (
-    <>
+  return <>
       <Head>
         <title>0xFable</title>
 
@@ -52,17 +53,18 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         */}
       </Head>
 
-      <WagmiProvider config={wagmiConfig}>
-        <QueryClientProvider client={queryClient}>
-          <ConnectKitProvider>
-            {/*{jotaiDebug()}*/}
-            <ComponentWrapper Component={Component} pageProps={pageProps} />
-            {/*<Toaster expand={true} />*/}
-          </ConnectKitProvider>
-        </QueryClientProvider>
-      </WagmiProvider>
-    </>
-  )
+      {isHydrated &&
+        <WagmiProvider config={wagmiConfig}>
+          <QueryClientProvider client={queryClient}>
+            <ConnectKitProvider>
+              {/*{jotaiDebug()}*/}
+              <ComponentWrapper Component={Component} pageProps={pageProps} isHydrated={isHydrated} />
+              {/*<Toaster expand={true} />*/}
+            </ConnectKitProvider>
+          </QueryClientProvider>
+        </WagmiProvider>
+      }
+  </>
 }
 
 export default MyApp
@@ -76,12 +78,13 @@ export default MyApp
 const ComponentWrapper = ({
                             Component,
                             pageProps,
+                            isHydrated
                           }: {
   Component: ComponentType
   pageProps: any
+  isHydrated: boolean
 }) => {
   const { address } = useAccount()
-  // const isHydrated = useIsHydrated()
   // const errorConfig = useErrorConfig()
 
   if (process.env.NODE_ENV === "development") { // constant
@@ -105,8 +108,7 @@ const ComponentWrapper = ({
   }
 
   return <>
-    {/*<Component { ...pageProps } isHydrated={isHydrated}/>*/}
-    <Component { ...pageProps } isHydrated={true}/>
+    <Component { ...pageProps } isHydrated={isHydrated}/>
     {/* Global error modal for errors that don't have obvious in-flow resolutions. */}
     {/*{isHydrated && errorConfig && <GlobalErrorModal config={errorConfig} />}*/}
   </>
