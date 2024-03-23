@@ -68,9 +68,10 @@ contract GridCatanGame is Owned {
     // ===== Setter funcs =====
     function landInitialize(uint256 landId, address _owner) public onlyGridLand721 {
         // initialize land type randomly with hash of block timestamp and id
+        // max landtype id is 4
         uint8 landtype = uint8(
             keccak256(abi.encodePacked(landId, block.timestamp, _owner))[31]
-        );
+        ) % 5;
         
         landInfo[landId]= Land(
             {
@@ -94,8 +95,59 @@ contract GridCatanGame is Owned {
         resourceEpoch = _resourceEpoch;
     }
 
-    function craft() public {
+    function craft(
+        uint256 _sugar,
+        uint256 _milk,
+        uint256 _tapioca,
+        uint256 _sesame,
+        uint256 _wheat
+    ) public {
+        //check if msg.sender has enough resources
+        require(
+            GridResource1155(gridResource1155).balanceOf(msg.sender, 0) >= _sugar &&
+            GridResource1155(gridResource1155).balanceOf(msg.sender, 1) >= _milk &&
+            GridResource1155(gridResource1155).balanceOf(msg.sender, 2) >= _tapioca &&
+            GridResource1155(gridResource1155).balanceOf(msg.sender, 3) >= _sesame &&
+            GridResource1155(gridResource1155).balanceOf(msg.sender, 4) >= _wheat,
+            "Not enough resources"
+        );
+
         // craft
+        // - sugar + milk + tapioca = boba
+        // - sugar + wheat + sesame = sesame bun
+
+        // get maximum boba amount to be crafted
+        uint256 minOfSugarMilk = _sugar < _milk ? _sugar : _milk;
+        uint256 minOfSugarMilkTapioca = minOfSugarMilk < _tapioca ? minOfSugarMilk : _tapioca;
+
+        // mint boba
+        if (minOfSugarMilkTapioca>0){
+            
+            GridResource1155(gridResource1155).mint(
+                msg.sender, 
+                uint256(LandType.BOBA), 
+                minOfSugarMilkTapioca, 
+                ""
+            );
+        }
+        
+        // get sugar left after mint
+        _sugar -= minOfSugarMilkTapioca;
+
+        // get maximum boba amount to be crafted
+        uint256 minOfSugarWheat = _sugar < _wheat ? _sugar : _wheat;
+        uint256 minOfSugarWheatSesame = minOfSugarWheat < _sesame ? minOfSugarWheat : _sesame;
+
+        // mint sesame bun
+        if (minOfSugarWheatSesame>0){
+            
+            GridResource1155(gridResource1155).mint(
+                msg.sender, 
+                uint256(LandType.SESAME_BUN), 
+                minOfSugarWheatSesame, 
+                ""
+            );
+        }
     }
 
     function purchase() public {
