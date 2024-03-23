@@ -35,41 +35,37 @@ const APP_DESCRIPTION = "Wizards & shit"
 // const APP_ICON = "https://0xFable.org/logo.png"
 
 const connectKitAppConfig = {
-  walletConnectProjectId,
-  app: {
-    name: APP_NAME,
+    walletConnectProjectId,
+    app: {
+        name: APP_NAME,
 
-    // Options below are optional
-    description: APP_DESCRIPTION,
-    // icon: APP_ICON,
-    // url: APP_URL,
-  },
+        // Options below are optional
+        description: APP_DESCRIPTION,
+        // icon: APP_ICON,
+        // url: APP_URL,
+    },
 }
 
 export const wagmiConfig = createConfig(
-  getDefaultConfig({
-    // Your dApps chains
-    chains,
-    walletConnectProjectId,
-    appName: APP_NAME,
+    getDefaultConfig({
+        // Your dApps chains
+        chains,
+        walletConnectProjectId,
+        appName: APP_NAME,
 
-    transports: {
-      // RPC URL for each chain
-      [localhost.id]: http(
-        `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`,
-      ),
-    },
+        transports: {
+            // RPC URL for each chain
+            [localhost.id]: http(`https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`),
+        },
 
-    connectors: [
-      ...getDefaultConnectors(connectKitAppConfig),
-      ],
-      // ...burnerConnectors],
+        connectors: [...getDefaultConnectors(connectKitAppConfig)],
+        // ...burnerConnectors],
 
-    // Options below are optional
-    appDescription: APP_DESCRIPTION,
-    // appUrl: "https://0xFable.org",
-    // appIcon: "https://0xFable.org/logo.png", // app icon, no bigger than 1024x1024px & 1MB
-  }),
+        // Options below are optional
+        appDescription: APP_DESCRIPTION,
+        // appUrl: "https://0xFable.org",
+        // appIcon: "https://0xFable.org/logo.png", // app icon, no bigger than 1024x1024px & 1MB
+    })
 )
 
 // =================================================================================================

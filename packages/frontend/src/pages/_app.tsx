@@ -8,7 +8,7 @@ import { NextPage } from "next"
 import type { AppProps } from "next/app"
 import Head from "next/head"
 import { useAccount, WagmiProvider } from "wagmi"
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { wagmiConfig } from "src/chain"
 // import jotaiDebug from "src/components/lib/jotaiDebug"
 // import { GlobalErrorModal } from "src/components/modals/globalErrorModal"
@@ -31,15 +31,15 @@ export type FablePage = NextPage<{ isHydrated: boolean }>
 // =================================================================================================
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
+    const queryClient = new QueryClient()
+    const isHydrated = useIsHydrated()
 
-  const queryClient = new QueryClient()
-  const isHydrated = useIsHydrated()
+    return (
+        <>
+            <Head>
+                <title>0xFable</title>
 
-  return <>
-      <Head>
-        <title>0xFable</title>
-
-        {/* Favicon
+                {/* Favicon
           <link rel="shortcut icon" href="/favicon.png" />
         /*}
 
@@ -51,20 +51,21 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
             crossOrigin="anonymous"
           />
         */}
-      </Head>
+            </Head>
 
-      {isHydrated &&
-        <WagmiProvider config={wagmiConfig}>
-          <QueryClientProvider client={queryClient}>
-            <ConnectKitProvider>
-              {/*{jotaiDebug()}*/}
-              <ComponentWrapper Component={Component} pageProps={pageProps} isHydrated={isHydrated} />
-              {/*<Toaster expand={true} />*/}
-            </ConnectKitProvider>
-          </QueryClientProvider>
-        </WagmiProvider>
-      }
-  </>
+            {isHydrated && (
+                <WagmiProvider config={wagmiConfig}>
+                    <QueryClientProvider client={queryClient}>
+                        <ConnectKitProvider>
+                            {/*{jotaiDebug()}*/}
+                            <ComponentWrapper Component={Component} pageProps={pageProps} isHydrated={isHydrated} />
+                            {/*<Toaster expand={true} />*/}
+                        </ConnectKitProvider>
+                    </QueryClientProvider>
+                </WagmiProvider>
+            )}
+        </>
+    )
 }
 
 export default MyApp
@@ -76,42 +77,45 @@ export default MyApp
  * and the `useAccount` hook can only be used within a WagmiConfig.
  */
 const ComponentWrapper = ({
-                            Component,
-                            pageProps,
-                            isHydrated
-                          }: {
-  Component: ComponentType
-  pageProps: any
-  isHydrated: boolean
+    Component,
+    pageProps,
+    isHydrated,
+}: {
+    Component: ComponentType
+    pageProps: any
+    isHydrated: boolean
 }) => {
-  const { address } = useAccount()
-  // const errorConfig = useErrorConfig()
+    const { address } = useAccount()
+    // const errorConfig = useErrorConfig()
 
-  if (process.env.NODE_ENV === "development") { // constant
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const router = useRouter()
-    const accountIndex = parseInt(router.query.index as string)
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useEffect(() => {
-      if (accountIndex === undefined || isNaN(accountIndex)) return
-      if (accountIndex < 0 || 9 < accountIndex) return
-      // void ensureLocalAccountIndex(accountIndex)
-    }, [accountIndex, address])
+    if (process.env.NODE_ENV === "development") {
+        // constant
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const router = useRouter()
+        const accountIndex = parseInt(router.query.index as string)
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useEffect(() => {
+            if (accountIndex === undefined || isNaN(accountIndex)) return
+            if (accountIndex < 0 || 9 < accountIndex) return
+            // void ensureLocalAccountIndex(accountIndex)
+        }, [accountIndex, address])
 
-    // It's necessary to update this on address, as Web3Modal (and possibly other wallet frameworks)
-    // will ignore our existence and try to override us with their own account (depending on how
-    // async code scheduling ends up working out).
+        // It's necessary to update this on address, as Web3Modal (and possibly other wallet frameworks)
+        // will ignore our existence and try to override us with their own account (depending on how
+        // async code scheduling ends up working out).
 
-    // To carry the `index` query parameter to other parts of the app, be sure to either use:
-    // - the `navigate` function from `utils/navigate.ts` instead of `router.push`.
-    // - the `link` component from `components/link.tsx` instead of `next/link`
-  }
+        // To carry the `index` query parameter to other parts of the app, be sure to either use:
+        // - the `navigate` function from `utils/navigate.ts` instead of `router.push`.
+        // - the `link` component from `components/link.tsx` instead of `next/link`
+    }
 
-  return <>
-    <Component { ...pageProps } isHydrated={isHydrated}/>
-    {/* Global error modal for errors that don't have obvious in-flow resolutions. */}
-    {/*{isHydrated && errorConfig && <GlobalErrorModal config={errorConfig} />}*/}
-  </>
+    return (
+        <>
+            <Component {...pageProps} isHydrated={isHydrated} />
+            {/* Global error modal for errors that don't have obvious in-flow resolutions. */}
+            {/*{isHydrated && errorConfig && <GlobalErrorModal config={errorConfig} />}*/}
+        </>
+    )
 }
 
 // =================================================================================================

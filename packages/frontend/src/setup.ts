@@ -9,8 +9,7 @@
 // SETUP
 
 // Called at bottom of this file.
-function setup() {
-}
+function setup() {}
 
 // =================================================================================================
 

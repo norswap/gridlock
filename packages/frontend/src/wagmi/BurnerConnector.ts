@@ -60,8 +60,6 @@ type Emitter = {
  * Right now, we're testing this with a hardcoded Anvil private key.
  */
 export class BurnerConnector {
-
-
     // CONNECTOR FIELD REFERENCE
 
     // https://github.com/wevm/wagmi/blob/a86aaab8f19a4f1288e74ab3239ccb0c8977672c/packages/core/src/connectors/createConnector.ts
@@ -122,7 +120,9 @@ export class BurnerConnector {
     }
 
     onChainChanged(_chainId: string): void {
-        this.emitter.emit("change", { chain: { id: this.#chain.id, unsupported: false } })
+        this.emitter.emit("change", {
+            chain: { id: this.#chain.id, unsupported: false },
+        })
     }
 
     onDisconnect(_error: Error | undefined): void {
@@ -173,21 +173,21 @@ export class BurnerConnector {
 
         // TODO
         // await this.#connectLock.protect(async () => {
-            if (!this.#connected) {
-                // The next two functions are wagmi actions, not methods of this class!
+        if (!this.#connected) {
+            // The next two functions are wagmi actions, not methods of this class!
 
-                // Unconditional disconnet to avoid issues: `getAccount().isConnect == false`
-                // but we still get an `AlreadyConnectedException` if we don't disconnect.
-                await disconnect(wagmiConfig)
-                await connect(wagmiConfig, { connector: this as any }) // TODO
-            }
+            // Unconditional disconnet to avoid issues: `getAccount().isConnect == false`
+            // but we still get an `AlreadyConnectedException` if we don't disconnect.
+            await disconnect(wagmiConfig)
+            await connect(wagmiConfig, { connector: this as any }) // TODO
+        }
         // })
     }
 
     async connect(_parameters: ConnectOptions): Promise<ConnectReturn> {
         const data = {
             chainId: this.#chain.id,
-            accounts: [this.#account.address]
+            accounts: [this.#account.address],
         }
         this.emitter.emit("connect", data)
         this.#connected = true
