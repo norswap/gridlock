@@ -2,14 +2,9 @@
 pragma solidity ^0.8.13;
 
 import "./GridResource1155.sol";
+import "solmate/auth/Owned.sol";
 
-contract GridCatanGame {
-
-    mapping(address => uint256) public totalOwnedWorkers;
-    mapping(address => uint256) public totalOwnedSoldiers;
-
-    // land index to owner to soldier count
-    mapping(uint256 => mapping(address => uint256)) public landToSoldierCount;
+contract GridCatanGame is Owned {
 
     address public gridLand721;
     address public gridResource1155;
@@ -62,7 +57,7 @@ contract GridCatanGame {
     constructor(
         address _gridLand721,
         address _gridResource1155
-    ) {
+    ) Owned(msg.sender) {
         gridLand721 = _gridLand721;
         gridResource1155 = _gridResource1155;
     }
@@ -93,6 +88,10 @@ contract GridCatanGame {
             timeOfLastResourceCollect: block.timestamp
         });
         
+    }
+
+    function setResourceEpoch(uint256 _resourceEpoch) public onlyOwner {
+        resourceEpoch = _resourceEpoch;
     }
 
     function craft() public {
