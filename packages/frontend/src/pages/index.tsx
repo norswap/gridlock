@@ -1,18 +1,22 @@
 import { useCallback, useEffect } from "react"
 
-import { clsx } from "clsx"
 import { ConnectKitButton, useModal } from "connectkit"
 import { useAccount } from "wagmi"
 
 import { chains } from "src/chain"
-import { deployment } from "src/deployment"
-import { useReadGridLand721GetAllLandUrIs, useWriteGridLand721SetTokenUri } from "src/generated"
-import { GridlockPage } from "src/pages/_app"
+import { Grid } from "src/components/Grid"
 import { Modal, showModal } from "src/components/modal"
-import { pinataURL } from "src/utils/pinata"
+import { deployment } from "src/deployment"
+import {
+    useReadGridCatanGameGetAllLandInfo,
+    useReadGridLand721GetAllLandUrIs,
+    useWriteGridLand721SetTokenUri,
+} from "src/generated"
+import { GridlockPage } from "src/pages/_app"
+import { LandInfo } from "src/types.js"
 
 const Home: GridlockPage = ({ isHydrated }) => {
-    const { GridLand721, GridResource1155 } = deployment
+    const { GridLand721, GridCatanGame } = deployment
 
     const { address, chain: accountChain } = useAccount()
     const { setOpen: setConnectKitModalOpen } = useModal()
@@ -41,6 +45,10 @@ const Home: GridlockPage = ({ isHydrated }) => {
         address: GridLand721,
     })
 
+    const { data: tiles } = useReadGridCatanGameGetAllLandInfo({
+        address: GridCatanGame,
+    })
+
     const { writeContract: setTokenURI } = useWriteGridLand721SetTokenUri()
 
     const setPicture = useCallback(
@@ -52,10 +60,6 @@ const Home: GridlockPage = ({ isHydrated }) => {
         },
         [setTokenURI]
     )
-
-    function displaySetPictureModal() {
-        console.log("set picture modalS")
-    }
 
     return (
         <main className="flex h-screen flex-col gap-y-10 px-10 py-10">
@@ -79,28 +83,16 @@ const Home: GridlockPage = ({ isHydrated }) => {
 
             {isRightNetwork && (
                 <div className="h- flex flex-row gap-5 overflow-auto">
-                    <div className="max-w-fit overflow-scroll">
-                        <div className="inline-grid min-w-max grid-cols-5 gap-5">
-                            {Array.from({ length: 25 }).map((_, index) => (
-                                <div
-                                    key={index}
-                                    className="flex h-64 w-64 items-center justify-center bg-gray-200 bg-cover"
-                                    style={{ backgroundImage: `url('${pinataURL(cid)}')` }}
-                                >
-                                    {~~(index / 5)}, {index % 5}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="flex flex-col h-full w-96 min-w-96">
-                        <div className="w-96 min-w-96 rounded-lg border-2 border-white p-5 mb-5">
+                    <Grid tiles={tiles as readonly LandInfo[]} />
+                    <div className="flex h-full w-96 min-w-96 flex-col">
+                        <div className="mb-5 w-96 min-w-96 rounded-lg border-2 border-white p-5">
                             <p>Wheat: 1, Sugar: 1, Milk: 1, Sesame: 1, Tapioca: 1</p>
                             <p>Boba: 1, Sesame Bun: 1</p>
                         </div>
                         {/* TODO: right-side corners are not rounded in the presence of a scrollbar */}
-                        <div
-                          className="overflow-auto rounded-lg border-2 border-white p-5">
+                        <div className="overflow-auto rounded-lg border-2 border-white p-5">
                             <h2 className="pb-3 text-2xl text-yellow-500">Land #1</h2>
+                            {/*{~~(index / 5)}, {index % 5}*/}
                             <p>Location: (0, 0)</p>
                             <p>Owned by 0x1234567890</p>
                             <p>Type: Pasture</p>

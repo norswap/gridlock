@@ -5,7 +5,7 @@
  */
 
 import { getDefaultConfig, getDefaultConnectors } from "connectkit"
-import { type Chain, http } from "viem"
+import { Address, type Chain, http } from "viem"
 import { createConfig } from "wagmi"
 import { localhost } from "wagmi/chains"
 
@@ -81,6 +81,8 @@ export type Hash = `0x${string}`
 
 /** Hash with value 0x0...0 */
 export const ZeroHash: Hash = `0x${"0".repeat(64)}`
+
+export const ZeroAddress: Address = `0x${"0".repeat(40)}`
 
 // -------------------------------------------------------------------------------------------------
 

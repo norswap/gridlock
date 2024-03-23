@@ -7,9 +7,12 @@ import {Script, console2} from "forge-std/Script.sol";
 import "../GridLand721.sol";
 import "../GridResource1155.sol";
 
+import "../GridCatanGame.sol";
+
 contract Deploy is Script {
     GridLand721 public gridLand;
     GridResource1155 public gridResource;
+    GridCatanGame public gridCatanGame;
 
     bool private doLog = true;
 
@@ -33,6 +36,12 @@ contract Deploy is Script {
 
         log("GridLand721 address", address(gridLand));
         log("GridResource1155 address", address(gridResource));
+
+        gridCatanGame = new GridCatanGame(address(gridLand), address(gridResource));
+
+        log("GridCatanGame address", address(gridCatanGame));
+
+        gridLand.setGridGameAddress(address(gridCatanGame));
 
         vm.stopBroadcast();
 

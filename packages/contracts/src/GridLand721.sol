@@ -4,6 +4,8 @@ pragma solidity ^0.8.13;
 import "solmate/tokens/ERC721.sol";
 import "solmate/auth/Owned.sol";
 import "openzeppelin/utils/Strings.sol";
+//import "./interfaces/IGridCatanGame.sol";
+import "./GridCatanGame.sol";
 
 contract GridLand721 is ERC721, Owned {
     string private baseURI;
@@ -11,21 +13,14 @@ contract GridLand721 is ERC721, Owned {
     uint256 public maxSupply = 25; // Max Land 5x5 square grid of lands
 
     string[25] public landURI;
+    address public gridCatangame;
 
-    constructor(
-        string memory name, 
-        string memory symbol, 
-        uint256 _max_supply
-    ) 
-        ERC721(name, symbol) Owned(msg.sender) 
-    {
+    constructor(string memory name, string memory symbol, uint256 _max_supply) ERC721(name, symbol) Owned(msg.sender) {
         //baseURI = _baseURI;
         maxSupply = _max_supply;
     }
 
-    // ===== Internal Functions ===== 
-
-    
+    // ===== Internal Functions =====
 
     // ===== Setters =====
 
@@ -34,10 +29,15 @@ contract GridLand721 is ERC721, Owned {
         baseURI = _newBaseURI;
     }
 
+    function setGridGameAddress(address _gridCatangame) public onlyOwner {
+        gridCatangame = _gridCatangame;
+    }
+
     // Example function to mint a new token
-    function mint(address to, uint256 id) public onlyOwner {
+    function mint(address to, uint256 id) public {
         require(totalSupply < maxSupply, "Max supply reached");
         _mint(to, id);
+        GridCatanGame(gridCatangame).landInitialize(id, to);
         totalSupply += 1; // Increment the total supply
     }
 
@@ -61,5 +61,4 @@ contract GridLand721 is ERC721, Owned {
     function getAllLandURIs() public view returns (string[25] memory) {
         return landURI;
     }
-
 }
