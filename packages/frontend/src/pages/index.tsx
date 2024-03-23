@@ -1,9 +1,10 @@
+import { useEffect } from "react"
+
 import { ConnectKitButton, useModal } from "connectkit"
 import { useAccount } from "wagmi"
 
 import { chains } from "src/chain"
-import { GridlockPage } from "src/pages/_app.js"
-import { useEffect } from "react"
+import { GridlockPage } from "src/pages/_app"
 
 const Home: GridlockPage = ({ isHydrated }) => {
     const { address, chain: accountChain } = useAccount()
