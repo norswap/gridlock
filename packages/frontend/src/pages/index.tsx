@@ -92,33 +92,41 @@ const Home: GridlockPage = ({ isHydrated }) => {
                             ))}
                         </div>
                     </div>
-                    <div className="h-full w-96 min-w-96 overflow-auto rounded-lg border-2 border-white p-5">
-                        <h2 className="pb-3 text-2xl text-yellow-500">Land #1</h2>
-                        <p>Location: (0, 0)</p>
-                        <p>Owned by 0x1234567890</p>
-                        <p>Type: Pasture</p>
-                        <p>Collection Resources: 3</p>
-                        <p></p>
-                        <p>Workers: 2</p>
-                        <p>Total Soldiers: 5</p>
-                        <p className="pl-10">Attacking Soldiers: 2</p>
-                        <p className="pl-10">Defending Soldiers: 2</p>
-                        <p></p>
-                        <p>Destination: (1, 1)</p>
-                        <p>Time to Arrival: 12s</p>
-                        <div className="flex flex-col justify-start gap-3 pt-3">
-                            <button className="button">Harvest</button>
-                            <button className="button">Attack</button>
-                            <button className="button">Resolve</button>
-                            <button className="button">Buy Worker (1 Boba)</button>
-                            <button className="button">Buy Soldier (1 Sesame Bun)</button>
-                            <button className="button" onClick={() => showModal("set-picture")}>
-                                Set Picture
-                            </button>
-                            <Modal id="set-picture">
-                                <h3 className="text-lg font-bold">Hello!</h3>
-                                <p className="py-4">Press ESC key or click on ✕ button to close</p>
-                            </Modal>
+                    <div className="flex flex-col h-full w-96 min-w-96">
+                        <div className="w-96 min-w-96 rounded-lg border-2 border-white p-5 mb-5">
+                            <p>Wheat: 1, Sugar: 1, Milk: 1, Sesame: 1, Tapioca: 1</p>
+                            <p>Boba: 1, Sesame Bun: 1</p>
+                        </div>
+                        {/* TODO: right-side corners are not rounded in the presence of a scrollbar */}
+                        <div
+                          className="overflow-auto rounded-lg border-2 border-white p-5">
+                            <h2 className="pb-3 text-2xl text-yellow-500">Land #1</h2>
+                            <p>Location: (0, 0)</p>
+                            <p>Owned by 0x1234567890</p>
+                            <p>Type: Pasture</p>
+                            <p>Collection Resources: 3</p>
+                            <p></p>
+                            <p>Workers: 2</p>
+                            <p>Total Soldiers: 5</p>
+                            <p className="pl-10">Attacking Soldiers: 2</p>
+                            <p className="pl-10">Defending Soldiers: 2</p>
+                            <p></p>
+                            <p>Destination: (1, 1)</p>
+                            <p>Time to Arrival: 12s</p>
+                            <div className="flex flex-col justify-start gap-3 pt-3">
+                                <button className="button">Harvest</button>
+                                <button className="button">Attack</button>
+                                <button className="button">Resolve</button>
+                                <button className="button">Buy Worker (1 Boba)</button>
+                                <button className="button">Buy Soldier (1 Sesame Bun)</button>
+                                <button className="button" onClick={() => showModal("set-picture")}>
+                                    Set Picture
+                                </button>
+                                <Modal id="set-picture">
+                                    <h3 className="text-lg font-bold">Hello!</h3>
+                                    <p className="py-4">Press ESC key or click on ✕ button to close</p>
+                                </Modal>
+                            </div>
                         </div>
                     </div>
                 </div>
