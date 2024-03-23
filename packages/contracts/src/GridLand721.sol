@@ -37,6 +37,10 @@ contract GridLand721 is ERC721, Owned {
         baseURI = _newBaseURI;
     }
 
+    function setGridGameAddress(address _gridCatangame) public onlyOwner {
+        gridCatangame = _gridCatangame;
+    }
+
     // Example function to mint a new token
     function mint(address to, uint256 id) public {
         require(totalSupply < maxSupply, "Max supply reached");
