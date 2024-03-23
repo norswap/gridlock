@@ -1,6 +1,8 @@
 # Gridlock
 
-Web3 project temmplate.
+Gridlock introduces spatial NFTs that are situated in a grid. On top of this Grid, we implement a
+Catan/Risk type game where players can harvest resources and raise armies to attack their
+neighbours. Other games can be permissionly added on top of the grid!
 
 ## Installation
 
