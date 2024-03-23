@@ -315,6 +315,15 @@ contract GridCatanGame is Owned {
             ""
         );
 
+        // loser loses 1 soldier
+        if (winnerLandId == fromLandId){
+            landInfo[toLandId].totalSoldiers -= 1;
+        } else {
+            landInfo[fromLandId].totalSoldiers - landInfo[fromLandId].attackingSoldiers >0 ? 
+                landInfo[fromLandId].totalSoldiers -= 1 : 
+                landInfo[fromLandId].totalSoldiers -= 0;
+        }
+
         // reset attack stats
         landInfo[fromLandId].attackingSoldiers = 0;
         landInfo[fromLandId].destinationId = 99;
