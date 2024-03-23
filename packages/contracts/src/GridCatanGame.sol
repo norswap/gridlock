@@ -184,6 +184,13 @@ contract GridCatanGame is Owned {
 
         // mint boba
         if (minOfSugarMilkTapioca>0){
+
+            // burn resources for boba
+            GridResource1155(gridResource1155).burnBatch(
+                msg.sender, 
+                [0, 1, 2], 
+                minOfSugarMilkTapioca
+            );
             
             GridResource1155(gridResource1155).mint(
                 msg.sender, 
@@ -203,6 +210,14 @@ contract GridCatanGame is Owned {
         // mint sesame bun
         if (minOfSugarWheatSesame>0){
             
+            // burn resources for sesame bun
+            GridResource1155(gridResource1155).burnBatch(
+                msg.sender, 
+                [0, 3, 4], 
+                minOfSugarWheatSesame
+            );
+
+            // mint sesame bun
             GridResource1155(gridResource1155).mint(
                 msg.sender, 
                 uint256(LandType.SESAME_BUN), 
@@ -210,6 +225,62 @@ contract GridCatanGame is Owned {
                 ""
             );
         }
+    }
+
+    function craftBoba(uint256 _boba) public {
+        // craft
+        // - sugar + milk + tapioca = boba
+
+        //check if msg.sender has enough resources
+        require(
+            GridResource1155(gridResource1155).balanceOf(msg.sender, 0) >= _boba &&
+            GridResource1155(gridResource1155).balanceOf(msg.sender, 1) >= _boba &&
+            GridResource1155(gridResource1155).balanceOf(msg.sender, 2) >= _boba,
+            "Not enough resources"
+        );
+
+        // burn resources for Boba
+        GridResource1155(gridResource1155).burnBatch(
+            msg.sender, 
+            [0, 1, 2], 
+            _boba
+        );
+
+        // mint boba
+        GridResource1155(gridResource1155).mint(
+            msg.sender, 
+            uint256(LandType.BOBA), 
+            _boba, 
+            ""
+        );
+    }
+
+    function craftBun(uint256 _bun) public {
+        // craft
+        // - sugar + wheat + sesame = sesame bun
+            
+        //check if msg.sender has enough resources
+        require(
+            GridResource1155(gridResource1155).balanceOf(msg.sender, 0) >= _bun &&
+            GridResource1155(gridResource1155).balanceOf(msg.sender, 3) >= _bun &&
+            GridResource1155(gridResource1155).balanceOf(msg.sender, 4) >= _bun,
+            "Not enough resources"
+        );
+
+        // burn resources for bun
+        GridResource1155(gridResource1155).burnBatch(
+            msg.sender, 
+            [0, 3, 4], 
+            _bun
+        );
+
+        // mint boba
+        GridResource1155(gridResource1155).mint(
+            msg.sender, 
+            uint256(LandType.SESAME_BUN), 
+            _bun, 
+            ""
+        );
     }
 
     function purchase(uint256 landId, uint256 additionalWorkers, uint256 additionalSoldiers) public {
