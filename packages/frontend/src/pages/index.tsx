@@ -1,12 +1,14 @@
-import { useEffect } from "react"
+import { useCallback, useEffect } from "react"
 
+import { clsx } from "clsx"
 import { ConnectKitButton, useModal } from "connectkit"
 import { useAccount } from "wagmi"
 
 import { chains } from "src/chain"
-import { GridlockPage } from "src/pages/_app"
-import { useReadGridLand721GetAllLandUrIs } from "src/generated"
 import { deployment } from "src/deployment"
+import { useReadGridLand721GetAllLandUrIs, useWriteGridLand721SetTokenUri } from "src/generated"
+import { GridlockPage } from "src/pages/_app"
+import { Modal, showModal } from "src/components/modal"
 
 const Home: GridlockPage = ({ isHydrated }) => {
     const { GridLand721, GridResource1155 } = deployment
@@ -32,13 +34,25 @@ const Home: GridlockPage = ({ isHydrated }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isRightNetwork])
 
-    const {data: pictures } = useReadGridLand721GetAllLandUrIs({
-        address: GridLand721
+    const { data: pictures } = useReadGridLand721GetAllLandUrIs({
+        address: GridLand721,
     })
 
-    console.log(pictures)
+    const { writeContract: setTokenURI } = useWriteGridLand721SetTokenUri()
 
-    const gridItems = Array.from({ length: 25 }, (_, index) => index + 1) // Create 25 items for the grid
+    const setPicture = useCallback(
+        (tokenId: number, url: string) => {
+            setTokenURI({
+                address: GridLand721,
+                args: [BigInt(tokenId), url],
+            })
+        },
+        [setTokenURI]
+    )
+
+    function displaySetPictureModal() {
+        console.log("set picture modalS")
+    }
 
     return (
         <main className="flex h-screen flex-col gap-y-10 px-10 py-10">
@@ -61,18 +75,24 @@ const Home: GridlockPage = ({ isHydrated }) => {
             </div>
 
             {isRightNetwork && (
-                <div className="flex h- flex-row gap-5 overflow-auto">
+                <div className="h- flex flex-row gap-5 overflow-auto">
                     <div className="max-w-fit overflow-scroll">
                         <div className="inline-grid min-w-max grid-cols-5 gap-5">
-                            {gridItems.map((item) => (
-                                <div key={item} className="flex h-64 w-64 items-center justify-center bg-gray-200">
-                                    {item}
+                            {Array.from({ length: 25 }).map((_, index) => (
+                                <div
+                                    key={index}
+                                    className={clsx(
+                                        "flex h-64 w-64 items-center justify-center bg-gray-200 bg-cover",
+                                        "bg-[url('../../public/art/terrain_wheat_fields.png')]"
+                                    )}
+                                >
+                                    {~~(index / 5)}, {index % 5}
                                 </div>
                             ))}
                         </div>
                     </div>
-                    <div className="h-full w-96 min-w-96 border-white border-2 rounded-lg p-5">
-                        <h2 className="text-2xl text-yellow-500 pb-3">Land #1</h2>
+                    <div className="h-full w-96 min-w-96 overflow-auto rounded-lg border-2 border-white p-5">
+                        <h2 className="pb-3 text-2xl text-yellow-500">Land #1</h2>
                         <p>Location: (0, 0)</p>
                         <p>Owned by 0x1234567890</p>
                         <p>Type: Pasture</p>
@@ -85,6 +105,20 @@ const Home: GridlockPage = ({ isHydrated }) => {
                         <p></p>
                         <p>Destination: (1, 1)</p>
                         <p>Time to Arrival: 12s</p>
+                        <div className="flex flex-col justify-start gap-3 pt-3">
+                            <button className="button">Harvest</button>
+                            <button className="button">Attack</button>
+                            <button className="button">Resolve</button>
+                            <button className="button">Buy Worker (1 Boba)</button>
+                            <button className="button">Buy Soldier (1 Sesame Bun)</button>
+                            <button className="button" onClick={() => showModal("set-picture")}>
+                                Set Picture
+                            </button>
+                            <Modal id="set-picture">
+                                <h3 className="text-lg font-bold">Hello!</h3>
+                                <p className="py-4">Press ESC key or click on ✕ button to close</p>
+                            </Modal>
+                        </div>
                     </div>
                 </div>
             )}
