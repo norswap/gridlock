@@ -95,17 +95,15 @@ const Tile: FC<TileProps> = (props) => {
                     <div className="absolute top-0 h-48 w-full" onClick={selectTile}></div>
                     <div className="absolute bottom-0 flex h-16 w-full flex-row justify-between bg-indigo-500 bg-opacity-75 p-1">
                         <img
-                            className="w-14 rounded-full border-2 border-black"
+                            className="w-14 rounded-full border-2 border-black mr-6"
                             src={resourceImageURL}
                             alt={resourceName}
-                            width={56}
-                            height={56}
                         />
 
                         <div className="flex flex-row">
                             <img
                                 className="w-14 rounded-full border-2 border-black"
-                                src="/art/frog_farmer.jpg"
+                                src="/art/pepe_farmer.png"
                                 alt="Workers"
                                 title="Workers"
                             />
@@ -115,11 +113,9 @@ const Tile: FC<TileProps> = (props) => {
                         <div className="flex flex-row">
                             <img
                                 className="w-14 rounded-full border-2 border-black"
-                                src="/art/frog_fighter.jpg"
+                                src="/art/pepe_knight.png"
                                 alt="Soldiers"
                                 title="Soldiers"
-                                width={56}
-                                height={56}
                             />
                             <p className="px-1 py-3 text-2xl">{props.info.totalSoldiers.toString()}</p>
                         </div>
