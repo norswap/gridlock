@@ -7,6 +7,7 @@ import "openzeppelin/utils/Strings.sol";
 
 contract GridResource1155 is ERC1155, Owned {
     string private baseURI;
+    address public gridCatanGame;
 
     // id mapping
     // 0 - sugar
@@ -38,6 +39,10 @@ contract GridResource1155 is ERC1155, Owned {
         baseURI = _newBaseURI;
     }
 
+    function setGridGameAddress(address _gridCatanGame) public onlyOwner {
+        gridCatanGame = _gridCatanGame;
+    }
+
     // This function allows the contract owner to mint new tokens
     function mint(address to, uint256 id, uint256 amount, bytes memory data) public {
         _mint(to, id, amount, data);
@@ -53,13 +58,13 @@ contract GridResource1155 is ERC1155, Owned {
 
     // Function to burn a single type of token
     function burn(address account, uint256 id, uint256 amount) public {
-        require(account == msg.sender || isApprovedForAll[account][msg.sender], "Caller is not owner nor approved");
+        require(msg.sender == gridCatanGame || account == msg.sender || isApprovedForAll[account][msg.sender], "Caller is not owner nor approved");
         _burn(account, id, amount);
     }
 
     // Function to burn multiple types of tokens in a single call
     function burnBatch(address account, uint256[] memory ids, uint256[] memory amounts) public {
-        require(account == msg.sender || isApprovedForAll[account][msg.sender], "Caller is not owner nor approved");
+        require(msg.sender == gridCatanGame || account == msg.sender || isApprovedForAll[account][msg.sender], "Caller is not owner nor approved");
         _batchBurn(account, ids, amounts);
     }
 }

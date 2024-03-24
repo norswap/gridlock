@@ -13,7 +13,7 @@ contract GridLand721 is ERC721, Owned {
     uint256 public maxSupply = 25; // Max Land 5x5 square grid of lands
 
     string[25] public landURI;
-    address public gridCatangame;
+    address public gridCatanGame;
 
     constructor(string memory name, string memory symbol, uint256 _max_supply) ERC721(name, symbol) Owned(msg.sender) {
         //baseURI = _baseURI;
@@ -29,15 +29,15 @@ contract GridLand721 is ERC721, Owned {
         baseURI = _newBaseURI;
     }
 
-    function setGridGameAddress(address _gridCatangame) public onlyOwner {
-        gridCatangame = _gridCatangame;
+    function setGridGameAddress(address _gridCatanGame) public onlyOwner {
+        gridCatanGame = _gridCatanGame;
     }
 
     // Example function to mint a new token
     function mint(address to, uint256 id) public {
         require(totalSupply < maxSupply, "Max supply reached");
         _mint(to, id);
-        GridCatanGame(gridCatangame).landInitialize(id, to);
+        GridCatanGame(gridCatanGame).landInitialize(id, to);
         totalSupply += 1; // Increment the total supply
     }
 

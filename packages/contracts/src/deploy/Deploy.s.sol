@@ -42,12 +42,25 @@ contract Deploy is Script {
         log("GridCatanGame address", address(gridCatanGame));
 
         gridLand.setGridGameAddress(address(gridCatanGame));
-
-        vm.stopBroadcast();
+        gridResource.setGridGameAddress(address(gridCatanGame));
 
         // Anvil first two test accounts.
         string memory mnemonic = "test test test test test test test test test test test junk";
         (address account0,) = deriveRememberKey(mnemonic, 0);
+
+        // Testing: premint a bunch of land
+        for (uint256 i = 0; i < 15; i++) {
+            gridLand.mint(account0, i);
+        }
+
+        // Testing: premint a bunch of resources
+        for (uint256 i = 0; i < 5; i++) {
+            gridResource.mint(account0, i, 100, "");
+        }
+
+        vm.stopBroadcast();
+
+
 
         vm.broadcast(account0);
         // do something as account0 (one transaction only, or use start/stopBroadcast)
