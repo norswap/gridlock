@@ -95,7 +95,7 @@ const Tile: FC<TileProps> = (props) => {
                     <div className="absolute top-0 h-48 w-full" onClick={selectTile}></div>
                     <div className="absolute bottom-0 flex h-16 w-full flex-row justify-between bg-indigo-500 bg-opacity-75 p-1">
                         <img
-                            className="w-14 rounded-full border-2 border-black mr-6"
+                            className="mr-6 w-14 rounded-full border-2 border-black"
                             src={resourceImageURL}
                             alt={resourceName}
                         />
@@ -107,7 +107,7 @@ const Tile: FC<TileProps> = (props) => {
                                 alt="Workers"
                                 title="Workers"
                             />
-                            <p className="px-1 py-3 text-2xl">{props.info.workers.toString()}</p>
+                            <p className="text-shadow px-1 py-3 text-2xl text-white">{props.info.workers.toString()}</p>
                         </div>
 
                         <div className="flex flex-row">
@@ -117,7 +117,9 @@ const Tile: FC<TileProps> = (props) => {
                                 alt="Soldiers"
                                 title="Soldiers"
                             />
-                            <p className="px-1 py-3 text-2xl">{props.info.totalSoldiers.toString()}</p>
+                            <p className="text-shadow px-1 py-3 text-2xl text-white">
+                                {props.info.totalSoldiers.toString()}
+                            </p>
                         </div>
                     </div>
                 </>
