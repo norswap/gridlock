@@ -7,7 +7,7 @@ import { secondsSinceEpoch, shortenAddress } from "src/utils"
 import {
     useReadGridCatanGameGetAllLandInfo,
     useReadGridCatanGameGetPlayerResourceBalance,
-    useWriteGridCatanGameHarvest
+    useWriteGridCatanGameHarvest, useWriteGridCatanGamePurchase
 } from "src/generated"
 import { deployment } from "src/deployment"
 import { useAccount, useWaitForTransactionReceipt } from "wagmi"
@@ -65,16 +65,11 @@ export const TileView: FC<TileViewProps> = (props) => {
     }
 
     const harvest = useCallback(() => {
-        console.log("harvesting")
         harvestCall({
             address: GridCatanGame,
             args: [BigInt(props.tileId)]
         })
     }, [harvestCall, props.tileId])
-
-    // TODO: fails because mint function is onlyOwner
-    // console.log(harvestTxStatus)
-    // console.log(error)
 
     const { data: tiles, refetch: refetchTiles } = useReadGridCatanGameGetAllLandInfo({
         address: GridCatanGame,
@@ -95,18 +90,46 @@ export const TileView: FC<TileViewProps> = (props) => {
         }
     }, [harvestTxStatus, harvestSucceeded, refetchTiles, refetchBalances])
 
-    const [_balances, setBalances] = useAtom(balancesAtom)
-    const [_grid, setGrid] = useAtom(gridAtom)
+    const { status: purchaseTxStatus, data: purchaseTxHash, error: purchaseError, writeContract: purchaseCall } = useWriteGridCatanGamePurchase()
+    const { isSuccess: purchaseSucceeded } = useWaitForTransactionReceipt({ hash: purchaseTxHash })
+
+    if (purchaseError) {
+        console.log(purchaseError)
+    }
+
+    const purchaseWorker = useCallback(() => {
+        purchaseCall({
+            address: GridCatanGame,
+            args: [BigInt(props.tileId), BigInt(1), BigInt(0)]
+        })
+    }, [purchaseCall, props.tileId])
+
+    const purchaseSoldier = useCallback(() => {
+        purchaseCall({
+            address: GridCatanGame,
+            args: [BigInt(props.tileId), BigInt(0), BigInt(1)]
+        })
+    }, [purchaseCall, props.tileId])
 
     useEffect(() => {
-        setBalances(balances as readonly bigint[])
-    }, [JSON.stringify(balances)])
-
-    useEffect(() => {
-        if (tiles) {
-            setGrid(tiles)
+        if (purchaseTxStatus == "success" && purchaseSucceeded) {
+            refetchTiles()
+            refetchBalances()
         }
-    }, [JSON.stringify(tiles)])
+    }, [purchaseTxStatus, purchaseSucceeded, refetchTiles, refetchBalances])
+
+    // const [_balances, setBalances] = useAtom(balancesAtom)
+    // const [_grid, setGrid] = useAtom(gridAtom)
+    //
+    // useEffect(() => {
+    //     setBalances(balances as readonly bigint[])
+    // }, [JSON.stringify(balances)])
+    //
+    // useEffect(() => {
+    //     if (tiles) {
+    //         setGrid(tiles)
+    //     }
+    // }, [JSON.stringify(tiles)])
 
     return (
         <>
@@ -141,8 +164,8 @@ export const TileView: FC<TileViewProps> = (props) => {
                 <button className="button" onClick={harvest}>Harvest</button>
                 <button className="button">Attack</button>
                 <button className="button">Resolve</button>
-                <button className="button">Buy Worker (1 Boba)</button>
-                <button className="button">Buy Soldier (1 Sesame Bun)</button>
+                <button className="button" onClick={purchaseWorker}>Buy Worker (1 Boba)</button>
+                <button className="button" onClick={purchaseSoldier}>Buy Soldier (1 Sesame Bun)</button>
                 <button className="button" onClick={() => showModal("set-picture")}>
                     Set Picture
                 </button>
