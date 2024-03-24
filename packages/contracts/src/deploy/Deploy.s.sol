@@ -55,7 +55,7 @@ contract Deploy is Script {
 
         // Testing: premint a bunch of resources
         for (uint256 i = 0; i < 5; i++) {
-            gridResource.mint(account0, i, 100, "");
+            gridResource.mint(account0, i, 10, "");
         }
 
         vm.stopBroadcast();

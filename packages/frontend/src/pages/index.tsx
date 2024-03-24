@@ -82,6 +82,7 @@ const Home: GridlockPage = ({ isHydrated }) => {
                     <span className="text-red-400">Grid</span>lock
                 </h1>
 
+
                 <div className="pt-5">
                     {notConnected && (
                         <button
