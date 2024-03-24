@@ -39,7 +39,7 @@ contract GridResource1155 is ERC1155, Owned {
     }
 
     // This function allows the contract owner to mint new tokens
-    function mint(address to, uint256 id, uint256 amount, bytes memory data) public onlyOwner {
+    function mint(address to, uint256 id, uint256 amount, bytes memory data) public {
         _mint(to, id, amount, data);
     }
 
