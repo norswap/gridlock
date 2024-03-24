@@ -57,8 +57,12 @@ export const TileView: FC<TileViewProps> = (props) => {
     const { GridCatanGame } = deployment
     const { address } = useAccount()
 
-    const { status: harvestTxStatus, data: harvestTxHash, error, writeContract: harvestCall } = useWriteGridCatanGameHarvest()
+    const { status: harvestTxStatus, data: harvestTxHash, error: harvestError, writeContract: harvestCall } = useWriteGridCatanGameHarvest()
     const { isSuccess: harvestSucceeded } = useWaitForTransactionReceipt({ hash: harvestTxHash })
+
+    if (harvestError) {
+        console.log(harvestError)
+    }
 
     const harvest = useCallback(() => {
         console.log("harvesting")
@@ -85,12 +89,9 @@ export const TileView: FC<TileViewProps> = (props) => {
     })
 
     useEffect(() => {
-        console.log("firing")
         if (harvestTxStatus == "success" && harvestSucceeded) {
-            console.log("refetching")
             refetchTiles()
             refetchBalances()
-            console.log("Harvest succeeded!")
         }
     }, [harvestTxStatus, harvestSucceeded, refetchTiles, refetchBalances])
 
