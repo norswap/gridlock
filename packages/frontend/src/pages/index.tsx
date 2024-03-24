@@ -79,7 +79,7 @@ const Home: GridlockPage = ({ isHydrated }) => {
         <main className="flex h-screen flex-col gap-y-10 px-10 py-10">
             <div className="flew-row flex justify-between">
                 <h1 className="font-serif text-7xl font-extrabold tracking-tight text-white">
-                    <span className="font-mono font-light text-red-400">Grid</span>lock
+                    <span className="text-red-400">Grid</span>lock
                 </h1>
 
                 <div className="pt-5">
@@ -102,12 +102,14 @@ const Home: GridlockPage = ({ isHydrated }) => {
                     {/* Side Panel */}
                     <div className="flex h-full w-96 min-w-96 flex-col">
                         <BalanceView balances={balances} />
-                            {/* TODO: right-side corners are not rounded in the presence of a scrollbar */}
-                            {/* TODO: avoid x axis overflow when content is too large */}
-                            <div className="overflow-auto rounded-lg border-2 border-white p-5">
-                                {selectedTileInfo && <TileView balances={balances} tileInfo={selectedTileInfo} />}
-                                {!selectedTileInfo && <p>Click a tile to view details!</p>}
-                            </div>
+                        {/* TODO: right-side corners are not rounded in the presence of a scrollbar */}
+                        {/* TODO: avoid x axis overflow when content is too large */}
+                        <div className="overflow-auto rounded-lg border-2 border-white p-5">
+                            {selectedTile && selectedTileInfo && (
+                                <TileView tileId={selectedTile} balances={balances as readonly bigint[]} tileInfo={selectedTileInfo} />
+                            )}
+                            {!selectedTileInfo && <p>Click a tile to view details!</p>}
+                        </div>
                     </div>
                 </div>
             )}

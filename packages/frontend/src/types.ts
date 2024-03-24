@@ -15,4 +15,15 @@ export type LandInfo = {
     landType: LandType
     workers: bigint
     totalSoldiers: bigint
+    location: {
+        x: number
+        y: number
+    }
+    attackingSoldiers: bigint
+    destinationId: bigint
+    destination: {
+        x: number
+        y: number
+    }
+    timeOfLastResourceCollect: bigint
 }
