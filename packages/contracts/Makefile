@@ -82,7 +82,7 @@ deploy: build
 		--fork-url $(RPC_$(CONFIG)) \
 		--private-key $(PRIVATE_KEY_$(CONFIG)) \
 		--broadcast \
-		--slow \
+		$(SLOW) \
 		--non-interactive \
 		| grep "address " > out/deployment.txt
 	@cat out/deployment.txt
