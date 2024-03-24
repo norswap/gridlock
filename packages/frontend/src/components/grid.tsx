@@ -20,9 +20,12 @@ interface TileProps {
 }
 
 const Tile: FC<TileProps> = (props) => {
+    const index = props.index
+    const mintLandCall = props.mintLand
+
     const mintLand = useCallback(() => {
-        props.mintLand(props.index)
-    }, [props.mintLand, props.index])
+        mintLandCall(index)
+    }, [mintLandCall, index])
 
     let landImage = ""
     switch (props.info.landType) {
@@ -75,9 +78,10 @@ const Tile: FC<TileProps> = (props) => {
 
     const isOwned = props.info.owner != ZeroAddress
 
+    const setSelectedTile = props.setSelectedTile
     const selectTile = useCallback(() => {
-        props.setSelectedTile(props.index)
-    }, [props.setSelectedTile, props.index])
+        setSelectedTile(index)
+    }, [setSelectedTile, index])
 
     return (
         <div
@@ -94,6 +98,8 @@ const Tile: FC<TileProps> = (props) => {
                             className="w-14 rounded-full border-2 border-black"
                             src={resourceImageURL}
                             alt={resourceName}
+                            width={56}
+                            height={56}
                         />
 
                         <div className="flex flex-row">
@@ -112,6 +118,8 @@ const Tile: FC<TileProps> = (props) => {
                                 src="/art/frog_fighter.jpg"
                                 alt="Soldiers"
                                 title="Soldiers"
+                                width={56}
+                                height={56}
                             />
                             <p className="px-1 py-3 text-2xl">{props.info.totalSoldiers.toString()}</p>
                         </div>
@@ -131,6 +139,7 @@ const Tile: FC<TileProps> = (props) => {
 
 export const Grid: FC<GridProps> = (props) => {
     const { GridLand721, GridCatanGame } = deployment
+
     const { address } = useAccount()
 
     const { status, data: mintTxHash, writeContract: mintCall } = useWriteGridLand721Mint()
@@ -147,15 +156,15 @@ export const Grid: FC<GridProps> = (props) => {
 
     const { isSuccess: mintTxConfirmed } = useWaitForTransactionReceipt({ hash: mintTxHash })
 
-    const { data: fetchedTiles, refetch } = useReadGridCatanGameGetAllLandInfo({
+    const { refetch: refetchTiles } = useReadGridCatanGameGetAllLandInfo({
         address: GridCatanGame,
     })
 
     useEffect(() => {
         if (status === "success" && mintTxConfirmed) {
-            refetch()
+            refetchTiles()
         }
-    }, [status, mintTxConfirmed, refetch])
+    }, [status, mintTxConfirmed, refetchTiles])
 
     return (
         <div className="max-w-fit overflow-scroll">

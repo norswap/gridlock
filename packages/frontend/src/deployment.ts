@@ -8,7 +8,7 @@
 import * as deployment_ from "contracts/out/deployment.json" assert { type: "json" }
 import type { Address } from "viem"
 
-export interface Deployment {
+export type Deployment = {
     GridLand721: Address
     GridResource1155: Address
     GridCatanGame: Address

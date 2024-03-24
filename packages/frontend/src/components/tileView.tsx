@@ -1,6 +1,5 @@
 import { FC, useCallback, useEffect } from "react"
 
-import { useAtom } from "jotai"
 import { useAccount, useWaitForTransactionReceipt } from "wagmi"
 
 import { ZeroAddress } from "src/chain"
@@ -12,7 +11,6 @@ import {
     useWriteGridCatanGameHarvest,
     useWriteGridCatanGamePurchase,
 } from "src/generated"
-import { balancesAtom, gridAtom } from "src/store"
 import { LandInfo, LandType } from "src/types"
 import { secondsSinceEpoch, shortenAddress } from "src/utils"
 
@@ -78,11 +76,11 @@ export const TileView: FC<TileViewProps> = (props) => {
         })
     }, [harvestCall, props.tileId])
 
-    const { data: tiles, refetch: refetchTiles } = useReadGridCatanGameGetAllLandInfo({
+    const { refetch: refetchTiles } = useReadGridCatanGameGetAllLandInfo({
         address: GridCatanGame,
     })
 
-    const { data: balances, refetch: refetchBalances } = useReadGridCatanGameGetPlayerResourceBalance({
+    const { refetch: refetchBalances } = useReadGridCatanGameGetPlayerResourceBalance({
         address: GridCatanGame,
         args: [address || "0x0"],
         query: {
@@ -129,19 +127,6 @@ export const TileView: FC<TileViewProps> = (props) => {
             refetchBalances()
         }
     }, [purchaseTxStatus, purchaseSucceeded, refetchTiles, refetchBalances])
-
-    // const [_balances, setBalances] = useAtom(balancesAtom)
-    // const [_grid, setGrid] = useAtom(gridAtom)
-    //
-    // useEffect(() => {
-    //     setBalances(balances as readonly bigint[])
-    // }, [JSON.stringify(balances)])
-    //
-    // useEffect(() => {
-    //     if (tiles) {
-    //         setGrid(tiles)
-    //     }
-    // }, [JSON.stringify(tiles)])
 
     return (
         <>

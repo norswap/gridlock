@@ -33,7 +33,7 @@ export const BalanceView: FC<BalanceViewProps> = (props) => {
     const { GridCatanGame } = deployment
     const { address } = useAccount()
 
-    const { data: balances, refetch: refetchBalances } = useReadGridCatanGameGetPlayerResourceBalance({
+    const { refetch: refetchBalances } = useReadGridCatanGameGetPlayerResourceBalance({
         address: GridCatanGame,
         args: [address || "0x0"],
         query: {

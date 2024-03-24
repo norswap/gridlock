@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 
 import { ConnectKitButton, useModal } from "connectkit"
 import { useAccount } from "wagmi"
@@ -15,7 +15,7 @@ import {
     useWriteGridLand721SetTokenUri,
 } from "src/generated"
 import { GridlockPage } from "src/pages/_app"
-import { LandInfo, LandType } from "src/types"
+import { LandInfo } from "src/types"
 
 const Home: GridlockPage = ({ isHydrated }) => {
     const { GridLand721, GridCatanGame } = deployment
@@ -45,7 +45,7 @@ const Home: GridlockPage = ({ isHydrated }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isRightNetwork])
 
-    const { data: pictures } = useReadGridLand721GetAllLandUrIs({
+    const { data: _pictures } = useReadGridLand721GetAllLandUrIs({
         address: GridLand721,
     })
 
@@ -65,7 +65,7 @@ const Home: GridlockPage = ({ isHydrated }) => {
 
     const { writeContract: setTokenURI } = useWriteGridLand721SetTokenUri()
 
-    const setPicture = useCallback(
+    const _setPicture = useCallback(
         (tokenId: number, url: string) => {
             setTokenURI({
                 address: GridLand721,
