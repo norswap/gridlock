@@ -1,18 +1,20 @@
 import { FC, useCallback, useEffect } from "react"
 
+import { useAtom } from "jotai"
+import { useAccount, useWaitForTransactionReceipt } from "wagmi"
+
 import { ZeroAddress } from "src/chain"
 import { Modal, showModal } from "src/components/modal"
-import { LandInfo, LandType } from "src/types"
-import { secondsSinceEpoch, shortenAddress } from "src/utils"
+import { deployment } from "src/deployment"
 import {
     useReadGridCatanGameGetAllLandInfo,
     useReadGridCatanGameGetPlayerResourceBalance,
-    useWriteGridCatanGameHarvest, useWriteGridCatanGamePurchase
+    useWriteGridCatanGameHarvest,
+    useWriteGridCatanGamePurchase,
 } from "src/generated"
-import { deployment } from "src/deployment"
-import { useAccount, useWaitForTransactionReceipt } from "wagmi"
-import { useAtom } from "jotai"
 import { balancesAtom, gridAtom } from "src/store"
+import { LandInfo, LandType } from "src/types"
+import { secondsSinceEpoch, shortenAddress } from "src/utils"
 
 interface TileViewProps {
     balances: readonly bigint[]
@@ -21,7 +23,7 @@ interface TileViewProps {
 }
 
 export const TileView: FC<TileViewProps> = (props) => {
-    let info = props.tileInfo
+    const info = props.tileInfo
     const shortOwner = shortenAddress(info.owner)
     let landTypeName = ""
     switch (info.landType) {
@@ -57,7 +59,12 @@ export const TileView: FC<TileViewProps> = (props) => {
     const { GridCatanGame } = deployment
     const { address } = useAccount()
 
-    const { status: harvestTxStatus, data: harvestTxHash, error: harvestError, writeContract: harvestCall } = useWriteGridCatanGameHarvest()
+    const {
+        status: harvestTxStatus,
+        data: harvestTxHash,
+        error: harvestError,
+        writeContract: harvestCall,
+    } = useWriteGridCatanGameHarvest()
     const { isSuccess: harvestSucceeded } = useWaitForTransactionReceipt({ hash: harvestTxHash })
 
     if (harvestError) {
@@ -67,7 +74,7 @@ export const TileView: FC<TileViewProps> = (props) => {
     const harvest = useCallback(() => {
         harvestCall({
             address: GridCatanGame,
-            args: [BigInt(props.tileId)]
+            args: [BigInt(props.tileId)],
         })
     }, [harvestCall, props.tileId])
 
@@ -90,7 +97,12 @@ export const TileView: FC<TileViewProps> = (props) => {
         }
     }, [harvestTxStatus, harvestSucceeded, refetchTiles, refetchBalances])
 
-    const { status: purchaseTxStatus, data: purchaseTxHash, error: purchaseError, writeContract: purchaseCall } = useWriteGridCatanGamePurchase()
+    const {
+        status: purchaseTxStatus,
+        data: purchaseTxHash,
+        error: purchaseError,
+        writeContract: purchaseCall,
+    } = useWriteGridCatanGamePurchase()
     const { isSuccess: purchaseSucceeded } = useWaitForTransactionReceipt({ hash: purchaseTxHash })
 
     if (purchaseError) {
@@ -100,14 +112,14 @@ export const TileView: FC<TileViewProps> = (props) => {
     const purchaseWorker = useCallback(() => {
         purchaseCall({
             address: GridCatanGame,
-            args: [BigInt(props.tileId), BigInt(1), BigInt(0)]
+            args: [BigInt(props.tileId), BigInt(1), BigInt(0)],
         })
     }, [purchaseCall, props.tileId])
 
     const purchaseSoldier = useCallback(() => {
         purchaseCall({
             address: GridCatanGame,
-            args: [BigInt(props.tileId), BigInt(0), BigInt(1)]
+            args: [BigInt(props.tileId), BigInt(0), BigInt(1)],
         })
     }, [purchaseCall, props.tileId])
 
@@ -144,28 +156,36 @@ export const TileView: FC<TileViewProps> = (props) => {
             <p>Workers: {info.workers.toString()}</p>
             <p>Total Soldiers: {info.totalSoldiers.toString()}</p>
 
-            {totalSoldiers > 0 && <>
-              <p className="pl-10">Attacking Soldiers: {attackingSoldiers}</p>
-              <p className="pl-10">Defending Soldiers: {defendingSoldiers}</p>
-            </>}
+            {totalSoldiers > 0 && (
+                <>
+                    <p className="pl-10">Attacking Soldiers: {attackingSoldiers}</p>
+                    <p className="pl-10">Defending Soldiers: {defendingSoldiers}</p>
+                </>
+            )}
 
             {attacking && (
-              <>
-                <p></p>
-                <p>Attacking: {attacking ? "Yes" : "No"}</p>
-                      <p>
-                          Destination: ({info.destination.x}, {info.destination.y})
-                      </p>
-                      <p>Time to Arrival: {timeToArrival}s</p>
-                  </>
-              )}
+                <>
+                    <p></p>
+                    <p>Attacking: {attacking ? "Yes" : "No"}</p>
+                    <p>
+                        Destination: ({info.destination.x}, {info.destination.y})
+                    </p>
+                    <p>Time to Arrival: {timeToArrival}s</p>
+                </>
+            )}
 
             <div className="flex flex-col justify-start gap-3 pt-3">
-                <button className="button" onClick={harvest}>Harvest</button>
+                <button className="button" onClick={harvest}>
+                    Harvest
+                </button>
                 <button className="button">Attack</button>
                 <button className="button">Resolve</button>
-                <button className="button" onClick={purchaseWorker}>Buy Worker (1 Boba)</button>
-                <button className="button" onClick={purchaseSoldier}>Buy Soldier (1 Sesame Bun)</button>
+                <button className="button" onClick={purchaseWorker}>
+                    Buy Worker (1 Boba)
+                </button>
+                <button className="button" onClick={purchaseSoldier}>
+                    Buy Soldier (1 Sesame Bun)
+                </button>
                 <button className="button" onClick={() => showModal("set-picture")}>
                     Set Picture
                 </button>

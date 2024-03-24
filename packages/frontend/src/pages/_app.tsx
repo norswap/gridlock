@@ -44,7 +44,6 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
                 <title>Gridlock</title>
                 <link rel="shortcut icon" href="/favicon.png" />
 
-
                 {/* Custom Font
                     <link
                         href="/font/BluuNext-Bold.otf"

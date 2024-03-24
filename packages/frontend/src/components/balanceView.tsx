@@ -1,22 +1,31 @@
 import { FC, useCallback, useEffect } from "react"
 
-import { LandType } from "src/types"
+import { useAccount, useWaitForTransactionReceipt } from "wagmi"
+
+import { deployment } from "src/deployment"
 import {
     useReadGridCatanGameGetPlayerResourceBalance,
     useWriteGridCatanGameCraftBoba,
-    useWriteGridCatanGameCraftBun
+    useWriteGridCatanGameCraftBun,
 } from "src/generated"
-import { useAccount, useWaitForTransactionReceipt } from "wagmi"
-import { deployment } from "src/deployment"
+import { LandType } from "src/types"
 
 interface BalanceViewProps {
     balances: readonly bigint[] | undefined
 }
 
 export const BalanceView: FC<BalanceViewProps> = (props) => {
-
-    const { data: craftBobaTxHash, error: craftBobaError, status: craftBobaStatus, writeContract: craftBobalCall } = useWriteGridCatanGameCraftBoba()
-    const { data: craftBunTxHash, status: craftBunStatus, writeContract: craftBunCall } = useWriteGridCatanGameCraftBun()
+    const {
+        data: craftBobaTxHash,
+        error: craftBobaError,
+        status: craftBobaStatus,
+        writeContract: craftBobalCall,
+    } = useWriteGridCatanGameCraftBoba()
+    const {
+        data: craftBunTxHash,
+        status: craftBunStatus,
+        writeContract: craftBunCall,
+    } = useWriteGridCatanGameCraftBun()
 
     const { isSuccess: craftBobaConfirmed } = useWaitForTransactionReceipt({ hash: craftBobaTxHash })
     const { isSuccess: craftBunConfirmed } = useWaitForTransactionReceipt({ hash: craftBunTxHash })
@@ -99,12 +108,16 @@ export const BalanceView: FC<BalanceViewProps> = (props) => {
                 <div className="flex flex-row items-center gap-1.5">
                     <img className="w-10 rounded-lg" src="/art/boba.png" alt="Boba" title="Boba" />
                     <p>{props.balances?.[LandType.BOBA]?.toString() || "0"}</p>
-                    <button className="button ml-2 !h-10 !min-h-10 !p-2" onClick={craftBoba}>Make</button>
+                    <button className="button ml-2 !h-10 !min-h-10 !p-2" onClick={craftBoba}>
+                        Make
+                    </button>
                 </div>
                 <div className="flex flex-row items-center gap-1.5">
                     <img className="w-10 rounded-lg" src="/art/bao_bun.png" alt="Sesame Bun" title="Sesame Bun" />
                     <p>{props.balances?.[LandType.SESAME_BUN]?.toString() || "0"}</p>
-                    <button className="button ml-2 !h-10 !min-h-10 !p-2" onClick={craftBun}>Bake</button>
+                    <button className="button ml-2 !h-10 !min-h-10 !p-2" onClick={craftBun}>
+                        Bake
+                    </button>
                 </div>
             </div>
         </div>
